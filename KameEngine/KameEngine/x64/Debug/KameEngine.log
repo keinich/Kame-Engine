@@ -1,0 +1,3 @@
+﻿  KameEngine.cpp
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(73,21): warning C4018: '<': signed/unsigned mismatch
+  KameEngine.vcxproj -> D:\Raftek\Kame2\KameEngine\x64\Debug\KameEngine.exe

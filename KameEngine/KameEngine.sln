@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KameEngine", "KameEngine\KameEngine.vcxproj", "{ADE23141-2308-433D-92FB-0BB6E1969A25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Debug|x64.ActiveCfg = Debug|x64
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Debug|x64.Build.0 = Debug|x64
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Debug|x86.ActiveCfg = Debug|Win32
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Debug|x86.Build.0 = Debug|Win32
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Release|x64.ActiveCfg = Release|x64
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Release|x64.Build.0 = Release|x64
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Release|x86.ActiveCfg = Release|Win32
+		{ADE23141-2308-433D-92FB-0BB6E1969A25}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA738527-7A6E-46CC-9AF9-D2B6C5EF2004}
+	EndGlobalSection
+EndGlobal
