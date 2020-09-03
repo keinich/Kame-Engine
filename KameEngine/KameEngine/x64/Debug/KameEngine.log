@@ -1,9 +1,0 @@
-﻿  KameEngine.cpp
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(40,21): warning C4018: '<': signed/unsigned mismatch
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(52,21): warning C4018: '<': signed/unsigned mismatch
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(89,21): warning C4018: '<': signed/unsigned mismatch
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(105,21): warning C4018: '<': signed/unsigned mismatch
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(127,59): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(129,61): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(147,21): warning C4018: '<': signed/unsigned mismatch
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(183,33): error C2065: 'surface': undeclared identifier
