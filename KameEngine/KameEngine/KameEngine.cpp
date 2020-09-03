@@ -42,7 +42,7 @@ void printStats(VkPhysicalDevice& device) {
   }
 
   uint32_t numberOfQueueFamilies = 0;
-  vkGetPhysicalDeviceQueueFamilyProperties(device, &numberOfQueueFamilies, NULL);
+  vkGetPhysicalDeviceQueueFamilyProperties(device, &numberOfQueueFamilies, nullptr);
   VkQueueFamilyProperties* familyProperties = new VkQueueFamilyProperties[numberOfQueueFamilies];
   vkGetPhysicalDeviceQueueFamilyProperties(device, &numberOfQueueFamilies, familyProperties);
 
@@ -60,7 +60,7 @@ void printStats(VkPhysicalDevice& device) {
     std::cout << "Timestamp Valid Bits: " << familyProperties[i].timestampValidBits << std::endl;
     uint32_t width = familyProperties[i].minImageTransferGranularity.width;
     uint32_t height = familyProperties[i].minImageTransferGranularity.height;
-    uint32_t depth= familyProperties[i].minImageTransferGranularity.depth;
+    uint32_t depth = familyProperties[i].minImageTransferGranularity.depth;
     std::cout << "Min Image Timestamp Granularity: " << width << ", " << height << ", " << depth << std::endl;
   }
 
@@ -73,7 +73,7 @@ int main() {
 
   VkApplicationInfo appInfo;
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  appInfo.pNext = NULL; // Erweiterungen
+  appInfo.pNext = nullptr; // Erweiterungen
   appInfo.pApplicationName = "Kame Sandbox";
   appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 0);
   appInfo.pEngineName = "Kame Engine";
@@ -81,7 +81,7 @@ int main() {
   appInfo.apiVersion = VK_API_VERSION_1_2;
 
   uint32_t numberOfLayers = 0;
-  vkEnumerateInstanceLayerProperties(&numberOfLayers, NULL);
+  vkEnumerateInstanceLayerProperties(&numberOfLayers, nullptr);
   VkLayerProperties* layerProperties = new VkLayerProperties[numberOfLayers];
   vkEnumerateInstanceLayerProperties(&numberOfLayers, layerProperties);
 
@@ -96,17 +96,17 @@ int main() {
   }
 
   uint32_t numberOfExtensions = 0;
-  vkEnumerateInstanceExtensionProperties(NULL, &numberOfExtensions, NULL);
+  vkEnumerateInstanceExtensionProperties(nullptr, &numberOfExtensions, nullptr);
   VkExtensionProperties* extensionProperties = new VkExtensionProperties[numberOfExtensions];
-  vkEnumerateInstanceExtensionProperties(NULL, &numberOfExtensions, extensionProperties);
-  
+  vkEnumerateInstanceExtensionProperties(nullptr, &numberOfExtensions, extensionProperties);
+
   std::cout << std::endl;
   std::cout << "Number of Extensions: " << numberOfExtensions << std::endl;
   for (int i = 0; i < numberOfExtensions; ++i) {
     std::cout << std::endl;
     std::cout << "Name: " << extensionProperties[i].extensionName << std::endl;
     std::cout << "Spec Version: " << extensionProperties[i].specVersion << std::endl;
-  }  
+  }
 
   std::cout << std::endl;
   std::cout << std::endl;
@@ -115,22 +115,25 @@ int main() {
     "VK_LAYER_KHRONOS_validation"
   };
 
+  const std::vector<const char*> usedExtensions = {
+    "VK_KHR_surface"
+  };
+
   VkInstanceCreateInfo instanceInfo;
   instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  instanceInfo.pNext = NULL; // Erweiterungen
+  instanceInfo.pNext = nullptr; // Erweiterungen
   instanceInfo.flags = 0; // noch keine Verwendung
   instanceInfo.pApplicationInfo = &appInfo;
   instanceInfo.enabledLayerCount = validationLayers.size();
   instanceInfo.ppEnabledLayerNames = validationLayers.data();
-  instanceInfo.enabledExtensionCount = 0;
-  instanceInfo.ppEnabledExtensionNames = NULL;
+  instanceInfo.enabledExtensionCount = usedExtensions.size();
+  instanceInfo.ppEnabledExtensionNames = usedExtensions.data();
 
   VkResult result = vkCreateInstance(&instanceInfo, NULL, &instance);
-
   ASSERT_VULKAN(result);
 
   uint32_t physicalDeviceCount;
-  result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, NULL);
+  result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
   ASSERT_VULKAN(result);
 
   std::cout << "Number of physical devices: " << physicalDeviceCount << std::endl;
@@ -148,33 +151,37 @@ int main() {
   float queuePrios[] = { 1.0f, 1.0f, 1.0f, 1.0f };
   VkDeviceQueueCreateInfo deviceQueueCreateInfo;
   deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-  deviceQueueCreateInfo.pNext = NULL;
+  deviceQueueCreateInfo.pNext = nullptr;
   deviceQueueCreateInfo.flags = 0;
   deviceQueueCreateInfo.queueFamilyIndex = 0; //TODO eigentlich beste aussuchen
-  deviceQueueCreateInfo.queueCount = 4; //TODO prüfen, ob 4 gehen
+  deviceQueueCreateInfo.queueCount = 1; //TODO prüfen, ob 4 gehen
   deviceQueueCreateInfo.pQueuePriorities = queuePrios; // alle haben die gleiche Prio, sonst Array von floats
 
   VkPhysicalDeviceFeatures usedFeatures = {};
   VkDeviceCreateInfo deviceCreateInfo;
   deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-  deviceCreateInfo.pNext = NULL;
+  deviceCreateInfo.pNext = nullptr;
   deviceCreateInfo.flags = 0;
   deviceCreateInfo.queueCreateInfoCount = 1;
   deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
   deviceCreateInfo.enabledLayerCount = 0;
-  deviceCreateInfo.ppEnabledLayerNames = NULL;
+  deviceCreateInfo.ppEnabledLayerNames = nullptr;
   deviceCreateInfo.enabledExtensionCount = 0;
-  deviceCreateInfo.ppEnabledExtensionNames = NULL;
+  deviceCreateInfo.ppEnabledExtensionNames = nullptr;
   deviceCreateInfo.pEnabledFeatures = &usedFeatures;
 
   //TODO pick best device instead of first device
-  result = vkCreateDevice(physicalDevices[0], &deviceCreateInfo, NULL, &device);
+  result = vkCreateDevice(physicalDevices[0], &deviceCreateInfo, nullptr, &device);
   ASSERT_VULKAN(result);
+
+  VkQueue queue;
+  vkGetDeviceQueue(device, 0, 0, &queue);
 
   vkDeviceWaitIdle(device);
 
-  vkDestroyDevice(device, NULL);
-  vkDestroyInstance(instance, NULL);
+  vkDestroyDevice(device, nullptr);
+  vkDestroySurfaceKHR(instance, surface, nullptr);
+  vkDestroyInstance(instance, nullptr);
 
   delete[] layerProperties;
   delete[] extensionProperties;
