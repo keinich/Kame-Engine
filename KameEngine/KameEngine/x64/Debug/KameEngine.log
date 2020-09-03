@@ -1,3 +1,8 @@
 ﻿  KameEngine.cpp
-D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(73,21): warning C4018: '<': signed/unsigned mismatch
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(40,21): warning C4018: '<': signed/unsigned mismatch
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(52,21): warning C4018: '<': signed/unsigned mismatch
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(89,21): warning C4018: '<': signed/unsigned mismatch
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(105,21): warning C4018: '<': signed/unsigned mismatch
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(123,59): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+D:\Raftek\Kame2\KameEngine\KameEngine\KameEngine.cpp(142,21): warning C4018: '<': signed/unsigned mismatch
   KameEngine.vcxproj -> D:\Raftek\Kame2\KameEngine\x64\Debug\KameEngine.exe
