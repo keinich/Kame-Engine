@@ -1,6 +1,4 @@
-.vs/
-KameEngine/.vs/
-KameEngine/x64/Debug/
-KameEngine/KameEngine/x64/
-
-*.db
+# .vs/
+# KameEngine/.vs/
+# KameEngine/x64/Debug/
+# KameEngine/KameEngine/x64/
