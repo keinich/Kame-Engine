@@ -180,7 +180,6 @@ int main() {
   vkDeviceWaitIdle(device);
 
   vkDestroyDevice(device, nullptr);
-  vkDestroySurfaceKHR(instance, surface, nullptr);
   vkDestroyInstance(instance, nullptr);
 
   delete[] layerProperties;
