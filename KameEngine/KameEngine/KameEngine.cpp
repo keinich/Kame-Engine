@@ -2,7 +2,9 @@
 //
 
 #include <iostream>
-#include "vulkan/vulkan.h"
+// #include "vulkan/vulkan.h"
+#define GLFW_INCLUDE_VULKAN
+#include "GLFW/glfw3.h"
 #include <vector>
 
 #define ASSERT_VULKAN(val)\
@@ -11,7 +13,13 @@
   }
 
 VkInstance instance;
+VkSurfaceKHR surface;
 VkDevice device;
+VkSwapchainKHR swapchain;
+GLFWwindow* window;
+
+const uint32_t WIDTH = 400;
+const uint32_t HEIGHT = 300;
 
 void printStats(VkPhysicalDevice& device) {
   VkPhysicalDeviceProperties properties;
@@ -64,12 +72,61 @@ void printStats(VkPhysicalDevice& device) {
     std::cout << "Min Image Timestamp Granularity: " << width << ", " << height << ", " << depth << std::endl;
   }
 
+  VkSurfaceCapabilitiesKHR surfaceCapabilities;
+  std::cout << "Surface capabilities: " << std::endl;
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &surfaceCapabilities);
+  std::cout << "\t minImageCount:           " << surfaceCapabilities.minImageCount << std::endl;
+  std::cout << "\t maxImageCount:           " << surfaceCapabilities.maxImageCount << std::endl;
+  std::cout << "\t currentExtent:           " << surfaceCapabilities.currentExtent.width << "/" << surfaceCapabilities.currentExtent.height << std::endl;
+  std::cout << "\t minImageExtent:          " << surfaceCapabilities.minImageExtent.width << "/" << surfaceCapabilities.minImageExtent.height << std::endl;
+  std::cout << "\t maxImageExtent:          " << surfaceCapabilities.maxImageExtent.width << "/" << surfaceCapabilities.maxImageExtent.height << std::endl;
+  std::cout << "\t maxImageArrayLayers:     " << surfaceCapabilities.maxImageArrayLayers << std::endl;
+  std::cout << "\t supportedTransforms:     " << surfaceCapabilities.supportedTransforms << std::endl;
+  std::cout << "\t currentTransform:        " << surfaceCapabilities.currentTransform << std::endl;
+  std::cout << "\t supportedCompositeAlpha: " << surfaceCapabilities.supportedCompositeAlpha << std::endl;
+  std::cout << "\t supportedUsageFlags:     " << surfaceCapabilities.supportedUsageFlags << std::endl;
+
+  uint32_t numberOfFormats = 0;
+  vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &numberOfFormats, nullptr);
+  VkSurfaceFormatKHR* surfaceFormats = new VkSurfaceFormatKHR[numberOfFormats];
+  vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &numberOfFormats, surfaceFormats);
+
   std::cout << std::endl;
 
+  std::cout << "Number of FOrmats: " << numberOfFormats << std::endl;
+  for (int i = 0; i < numberOfFormats; ++i) {
+    std::cout << "Format: " << surfaceFormats[i].format << std::endl;
+  }
+
+  uint32_t numberOfPresentationModes = 0;
+  vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &numberOfPresentationModes, nullptr);
+  VkPresentModeKHR* presentModes = new VkPresentModeKHR[numberOfPresentationModes];
+  vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &numberOfPresentationModes, presentModes);
+
+  std::cout << std::endl;
+  std::cout << "Number of Presentation Modes: " << numberOfPresentationModes;
+  std::cout << std::endl;
+  for (int i = 0; i < numberOfPresentationModes; ++i) {
+    std::cout << "Supported presentation mode: " << presentModes[i] << std::endl;
+  }
+
+  std::cout << std::endl;
   delete[] familyProperties;
+  delete[] surfaceFormats;
+  delete[] presentModes;
 }
 
-int main() {
+void startGlfw() {
+
+  glfwInit();
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+  window = glfwCreateWindow(WIDTH, HEIGHT, "Kame Engine", nullptr, nullptr);
+
+}
+
+void startVulkan() {
 
   VkApplicationInfo appInfo;
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -115,6 +172,9 @@ int main() {
     "VK_LAYER_KHRONOS_validation"
   };
 
+  uint32_t numberOfGlfwExtensions = 0;
+  auto glfwExtensions = glfwGetRequiredInstanceExtensions(&numberOfGlfwExtensions);
+
   const std::vector<const char*> usedExtensions = {
     "VK_KHR_surface"
   };
@@ -126,10 +186,13 @@ int main() {
   instanceInfo.pApplicationInfo = &appInfo;
   instanceInfo.enabledLayerCount = validationLayers.size();
   instanceInfo.ppEnabledLayerNames = validationLayers.data();
-  instanceInfo.enabledExtensionCount = usedExtensions.size();
-  instanceInfo.ppEnabledExtensionNames = usedExtensions.data();
+  instanceInfo.enabledExtensionCount = numberOfGlfwExtensions;
+  instanceInfo.ppEnabledExtensionNames = glfwExtensions;
 
   VkResult result = vkCreateInstance(&instanceInfo, NULL, &instance);
+  ASSERT_VULKAN(result);
+
+  result = glfwCreateWindowSurface(instance, window, nullptr, &surface);
   ASSERT_VULKAN(result);
 
   uint32_t physicalDeviceCount;
@@ -158,6 +221,11 @@ int main() {
   deviceQueueCreateInfo.pQueuePriorities = queuePrios; // alle haben die gleiche Prio, sonst Array von floats
 
   VkPhysicalDeviceFeatures usedFeatures = {};
+
+  const std::vector<const char*> deviceExtensions = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+  };
+
   VkDeviceCreateInfo deviceCreateInfo;
   deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   deviceCreateInfo.pNext = nullptr;
@@ -166,8 +234,8 @@ int main() {
   deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
   deviceCreateInfo.enabledLayerCount = 0;
   deviceCreateInfo.ppEnabledLayerNames = nullptr;
-  deviceCreateInfo.enabledExtensionCount = 0;
-  deviceCreateInfo.ppEnabledExtensionNames = nullptr;
+  deviceCreateInfo.enabledExtensionCount = deviceExtensions.size();
+  deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
   deviceCreateInfo.pEnabledFeatures = &usedFeatures;
 
   //TODO pick best device instead of first device
@@ -177,11 +245,66 @@ int main() {
   VkQueue queue;
   vkGetDeviceQueue(device, 0, 0, &queue);
 
-  vkDeviceWaitIdle(device);
+  VkBool32 surfaceSupport = false;
+  result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevices[0], 0, surface, &surfaceSupport);
+  ASSERT_VULKAN(result);
 
-  vkDestroyDevice(device, nullptr);
-  vkDestroyInstance(instance, nullptr);
+  if (!surfaceSupport) {
+    std::cerr << "Surface nut supported!" << std::endl;
+    __debugbreak;
+  }
+
+  VkSwapchainCreateInfoKHR swapChainCreateInfo;
+  swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  swapChainCreateInfo.pNext = nullptr;;
+  swapChainCreateInfo.flags = 0;
+  swapChainCreateInfo.surface = surface;
+  swapChainCreateInfo.minImageCount = 3; //TODO check if valid
+  swapChainCreateInfo.imageFormat = VK_FORMAT_B8G8R8A8_UNORM; //TODO check if valid
+  swapChainCreateInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR; //TODO check if valid
+  swapChainCreateInfo.imageExtent = VkExtent2D{ WIDTH, HEIGHT }; //TODO
+  swapChainCreateInfo.imageArrayLayers = 1;
+  swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE; // TODO civ
+  swapChainCreateInfo.queueFamilyIndexCount = 0;
+  swapChainCreateInfo.pQueueFamilyIndices = nullptr;
+  swapChainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+  swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  swapChainCreateInfo.presentMode = VK_PRESENT_MODE_FIFO_KHR; //TODO
+  swapChainCreateInfo.clipped = VK_TRUE;
+  swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+
+  result = vkCreateSwapchainKHR(device, &swapChainCreateInfo, nullptr, &swapchain);
 
   delete[] layerProperties;
   delete[] extensionProperties;
+}
+
+void gameLoop() {
+  while (!glfwWindowShouldClose(window)) {
+    glfwPollEvents();
+  }
+}
+
+void shutdownVulkan() {
+  vkDeviceWaitIdle(device);
+
+  vkDestroySwapchainKHR(device, swapchain, nullptr);
+  vkDestroyDevice(device, nullptr);
+  vkDestroySurfaceKHR(instance, surface, nullptr);
+  vkDestroyInstance(instance, nullptr);
+}
+
+void shutdownGlfw() {
+  glfwDestroyWindow(window);
+}
+
+int main() {
+
+  startGlfw();
+  startVulkan();
+  gameLoop();
+  shutdownVulkan();
+  shutdownGlfw();
+
 }
