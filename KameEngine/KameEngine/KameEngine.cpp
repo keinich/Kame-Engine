@@ -6,6 +6,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
 #include <vector>
+#include <fstream>
 
 #define ASSERT_VULKAN(val)\
   if (val!= VK_SUCCESS) {\
@@ -16,6 +17,10 @@ VkInstance instance;
 VkSurfaceKHR surface;
 VkDevice device;
 VkSwapchainKHR swapchain;
+VkImageView* imageViews;
+VkShaderModule shaderModuleVert;
+VkShaderModule shaderModuleFrag;
+uint32_t numberOfImagesInSwapchain = 0;
 GLFWwindow* window;
 
 const uint32_t WIDTH = 400;
@@ -116,6 +121,21 @@ void printStats(VkPhysicalDevice& device) {
   delete[] presentModes;
 }
 
+std::vector<char> readFile(const std::string& filename) {
+  std::ifstream file(filename, std::ios::binary | std::ios::ate);
+
+  if (!file) {
+    throw std::runtime_error("couldnt open file");
+  }
+
+  size_t fileSize = (size_t)file.tellg();
+  std::vector<char> fileBuffer(fileSize);
+  file.seekg(0);
+  file.read(fileBuffer.data(), fileSize);
+  file.close();
+  return fileBuffer;
+}
+
 void startGlfw() {
 
   glfwInit();
@@ -124,6 +144,18 @@ void startGlfw() {
 
   window = glfwCreateWindow(WIDTH, HEIGHT, "Kame Engine", nullptr, nullptr);
 
+}
+
+void createShaderModule(const std::vector<char>& code, VkShaderModule *shaderModule) {
+  VkShaderModuleCreateInfo shaderCreateInfo;
+  shaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+  shaderCreateInfo.pNext = nullptr;
+  shaderCreateInfo.flags = 0;
+  shaderCreateInfo.codeSize = code.size();
+  shaderCreateInfo.pCode = (uint32_t*)code.data();
+
+  VkResult result = vkCreateShaderModule(device, &shaderCreateInfo, nullptr, shaderModule);
+  ASSERT_VULKAN(result);
 }
 
 void startVulkan() {
@@ -276,6 +308,41 @@ void startVulkan() {
 
   result = vkCreateSwapchainKHR(device, &swapChainCreateInfo, nullptr, &swapchain);
 
+  vkGetSwapchainImagesKHR(device, swapchain, &numberOfImagesInSwapchain, nullptr);
+  VkImage* swapchainImages = new VkImage[numberOfImagesInSwapchain];
+  result = vkGetSwapchainImagesKHR(device, swapchain, &numberOfImagesInSwapchain, swapchainImages);
+  ASSERT_VULKAN(result);
+
+  imageViews = new VkImageView[numberOfImagesInSwapchain];
+  for (int i = 0; i < numberOfImagesInSwapchain; ++i) {
+    VkImageViewCreateInfo imageViewCreateInfo;
+    imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    imageViewCreateInfo.pNext = nullptr;
+    imageViewCreateInfo.flags = 0;
+    imageViewCreateInfo.image = swapchainImages[i];
+    imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    imageViewCreateInfo.format = VK_FORMAT_B8G8R8A8_UNORM; //TODO civ
+    imageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    imageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    imageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    imageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+    imageViewCreateInfo.subresourceRange.levelCount = 1;
+    imageViewCreateInfo.subresourceRange.baseArrayLayer = 0; //Stereographische Texturen -> linkes und rechtes Auge unterschiedliche Texturen
+    imageViewCreateInfo.subresourceRange.layerCount = 1;
+
+    result = vkCreateImageView(device, &imageViewCreateInfo, nullptr, &imageViews[i]);
+    ASSERT_VULKAN(result);
+  }
+
+  std::vector<char> shaderCodeVert = readFile("vert.spv");
+  std::vector<char> shaderCodeFrag = readFile("frag.spv");
+   
+  createShaderModule(shaderCodeVert, &shaderModuleVert);
+  createShaderModule(shaderCodeFrag, &shaderModuleFrag);
+
+  delete[] swapchainImages;
   delete[] layerProperties;
   delete[] extensionProperties;
 }
@@ -289,6 +356,12 @@ void gameLoop() {
 void shutdownVulkan() {
   vkDeviceWaitIdle(device);
 
+  for (int i = 0; i < numberOfImagesInSwapchain; ++i) {
+    vkDestroyImageView(device, imageViews[i], nullptr);
+  }
+  delete[] imageViews;
+  vkDestroyShaderModule(device, shaderModuleFrag, nullptr);
+  vkDestroyShaderModule(device, shaderModuleVert, nullptr);
   vkDestroySwapchainKHR(device, swapchain, nullptr);
   vkDestroyDevice(device, nullptr);
   vkDestroySurfaceKHR(instance, surface, nullptr);
