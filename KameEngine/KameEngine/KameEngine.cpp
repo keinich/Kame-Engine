@@ -345,8 +345,8 @@ void startVulkan() {
     ASSERT_VULKAN(result);
   }
 
-  std::vector<char> shaderCodeVert = readFile("vert.spv");
-  std::vector<char> shaderCodeFrag = readFile("frag.spv");
+  std::vector<char> shaderCodeVert = readFile("D:/Raftek/Kame2/KameEngine/KameEngine/vert.spv");
+  std::vector<char> shaderCodeFrag = readFile("D:/Raftek/Kame2/KameEngine/KameEngine/frag.spv");
 
   createShaderModule(shaderCodeVert, &shaderModuleVert);
   createShaderModule(shaderCodeFrag, &shaderModuleFrag);
