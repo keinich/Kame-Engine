@@ -3,3 +3,5 @@ KameEngine/.vs/
 KameEngine/x64/Debug/
 KameEngine/KameEngine/x64/
 KameEngine/VS/
+bin/
+bin-int/
