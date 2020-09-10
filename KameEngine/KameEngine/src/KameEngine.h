@@ -693,7 +693,7 @@ void createCommandBuffers() {
 }
 
 uint32_t findMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
-
+  return 0;
 }
 
 void createVertexBuffer() {

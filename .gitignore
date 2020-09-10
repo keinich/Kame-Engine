@@ -9,6 +9,9 @@ KameEngine/KameEngine/x64/
 KameEngine/bin
 KameEngine/bin-int
 
+KameEngine/KameEngine/vendor/glfw/bin/
+KameEngine/KameEngine/vendor/glfw/bin-int/
+
 # vendors
 # KameEngine/vendor/
 # KameEngine/KameEngine/vendor/
