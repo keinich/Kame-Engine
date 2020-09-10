@@ -1,7 +1,14 @@
-.vs/
+# Visual Studio Stuff
 KameEngine/.vs/
-KameEngine/x64/Debug/
+*.vcxproj
+*.sln
+*.user
+
+# Bins
 KameEngine/KameEngine/x64/
-KameEngine/VS/
-bin/
-bin-int/
+KameEngine/bin
+KameEngine/bin-int
+
+# vendors
+# KameEngine/vendor/
+# KameEngine/KameEngine/vendor/

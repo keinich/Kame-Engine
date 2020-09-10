@@ -13,7 +13,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "KameEngine/vendor/GLFW/include"
 --IncludeDir["Glad"] = "KameEngine/vendor/GLAD/include"
 --IncludeDir["ImGui"] = "KameEngine/vendor/imgui"
---IncludeDir["glm"] = "KameEngine/vendor/glm"
+IncludeDir["glm"] = "KameEngine/vendor/glm"
 --IncludeDir["DirectXTex"] = "Kame/vendor/DirectXTex/DirectXTex"
 IncludeDir["Vulkan"] = "KameEngine/vendor/vulkan/include"
 
@@ -53,7 +53,7 @@ project "KameEngine"
     "%{IncludeDir.GLFW}",
     --"%{IncludeDir.Glad}",
     --"%{IncludeDir.ImGui}",
-    --"%{IncludeDir.glm}",
+    "%{IncludeDir.glm}",
     "%{IncludeDir.Vulkan}"
   }
 
@@ -127,6 +127,7 @@ project "Sandbox"
     --"KameEngine/vendor/spdlog/include",
     "KameEngine/src",
     "%{IncludeDir.GLFW}",
+    "%{IncludeDir.glm}",
     "%{IncludeDir.Vulkan}"
   }
 
