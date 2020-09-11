@@ -34,6 +34,9 @@ VkSemaphore semaphoreImageAvailable;
 VkSemaphore semaphoreRenderingDone;
 VkQueue queue;
 VkBuffer vertexBuffer;
+VkBuffer indexBuffer;
+VkDeviceMemory vertexBufferDeviceMemory;
+VkDeviceMemory indexBufferDeviceMemory;
 uint32_t numberOfImagesInSwapchain = 0;
 GLFWwindow* window;
 
@@ -76,9 +79,14 @@ public:
 };
 
 std::vector<Vertex> vertices = {
-  Vertex({ 0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}),
+  Vertex({-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}),
   Vertex({ 0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}),
-  Vertex({-0.5f,  0.5f}, {0.0f, 0.0f, 1.0f})
+  Vertex({-0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}),
+  Vertex({ 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f})
+};
+
+std::vector<uint32_t> indices = {
+  0, 1, 2, 0, 3, 1
 };
 
 void printStats(VkPhysicalDevice& device) {
@@ -512,7 +520,7 @@ void createPipeline() {
   VkPipelineShaderStageCreateInfo shaderStages[] = { shaderStageCreateInfoVert, shaderStageCreateInfoFrag };
 
   auto vertexBindingDescription = Vertex::getBindingDescription();
-  auto vertexAttributeDescriptions = Vertex::getAttributeDescriptions ();
+  auto vertexAttributeDescriptions = Vertex::getAttributeDescriptions();
 
   VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo;
   vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -693,32 +701,144 @@ void createCommandBuffers() {
 }
 
 uint32_t findMemoryTypeIndex(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
-  return 0;
+  VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties;
+  vkGetPhysicalDeviceMemoryProperties(physicalDevices[0], &physicalDeviceMemoryProperties); // TODO civ
+  for (uint32_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; i++) {
+    if (
+      (typeFilter & (1 << i))
+      && ((physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
+      ) {
+      return i;
+    }
+  }
+
+  __debugbreak();
+  throw std::runtime_error("No correct memory type found");
 }
 
-void createVertexBuffer() {
+void createBuffer(
+  VkDeviceSize deviceSize, VkBufferUsageFlags bufferUsageFlags, VkBuffer& buffer,
+  VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceMemory& deviceMemory
+) {
   VkBufferCreateInfo bufferCreateInfo;
   bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   bufferCreateInfo.pNext = nullptr;
   bufferCreateInfo.flags = 0;
-  bufferCreateInfo.size = sizeof(Vertex) * vertices.size();
-  bufferCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+  bufferCreateInfo.size = deviceSize;
+  bufferCreateInfo.usage = bufferUsageFlags;
   bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
   bufferCreateInfo.queueFamilyIndexCount = 0;
   bufferCreateInfo.pQueueFamilyIndices = nullptr;
 
-  VkResult result = vkCreateBuffer(device, &bufferCreateInfo, nullptr, &vertexBuffer);
+  VkResult result = vkCreateBuffer(device, &bufferCreateInfo, nullptr, &buffer);
   ASSERT_VULKAN(result);
 
   VkMemoryRequirements memoryRequirements;
-  vkGetBufferMemoryRequirements(device, vertexBuffer, &memoryRequirements);
+  vkGetBufferMemoryRequirements(device, buffer, &memoryRequirements);
 
   VkMemoryAllocateInfo memoryAllocateInfo;
   memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
   memoryAllocateInfo.pNext = nullptr;
   memoryAllocateInfo.allocationSize = memoryRequirements.size;
-  memoryAllocateInfo.memoryTypeIndex;
+  memoryAllocateInfo.memoryTypeIndex = findMemoryTypeIndex(
+    memoryRequirements.memoryTypeBits, memoryPropertyFlags
+  );
 
+  result = vkAllocateMemory(device, &memoryAllocateInfo, nullptr, &deviceMemory);
+  ASSERT_VULKAN(result);
+
+  vkBindBufferMemory(device, buffer, deviceMemory, 0);
+}
+
+void copyBuffer(VkBuffer src, VkBuffer dest, VkDeviceSize size) {
+  VkCommandBufferAllocateInfo commandBufferAllocateInfo;
+  commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  commandBufferAllocateInfo.pNext = nullptr;
+  commandBufferAllocateInfo.commandPool = commandPool;
+  commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  commandBufferAllocateInfo.commandBufferCount = 1;
+
+  VkCommandBuffer commandBuffer;
+  VkResult result = vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer);
+  ASSERT_VULKAN(result);
+
+  VkCommandBufferBeginInfo commandBufferBeginInfo;
+  commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  commandBufferBeginInfo.pNext = nullptr;
+  commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  commandBufferBeginInfo.pInheritanceInfo = nullptr;
+
+  result = vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+  ASSERT_VULKAN(result);
+
+  VkBufferCopy bufferCopy;
+  bufferCopy.srcOffset = 0;
+  bufferCopy.dstOffset = 0;
+  bufferCopy.size = size;
+
+  vkCmdCopyBuffer(commandBuffer, src, dest, 1, &bufferCopy);
+
+  result = vkEndCommandBuffer(commandBuffer);
+  ASSERT_VULKAN(result);
+
+  VkSubmitInfo submitInfo;
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.pNext = nullptr;
+  submitInfo.waitSemaphoreCount = 0;
+  submitInfo.pWaitSemaphores = nullptr;
+  submitInfo.pWaitDstStageMask = nullptr;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
+  submitInfo.signalSemaphoreCount = 0;
+  submitInfo.pSignalSemaphores = nullptr;
+
+  result = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+  ASSERT_VULKAN(result);
+
+  vkQueueWaitIdle(queue);
+
+  vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}
+
+template <typename T>
+void createAndUploadBuffer(std::vector<T> data, VkBufferUsageFlags usage, VkBuffer& buffer, VkDeviceMemory& deviceMemory) {
+  VkDeviceSize  bufferSize = sizeof(T) * data.size();
+
+  VkBuffer stagingBuffer;
+  VkDeviceMemory stagingBufferMemory;
+  createBuffer(
+    bufferSize,
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+    stagingBuffer,
+    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    stagingBufferMemory
+  );
+
+  void* rawData;
+  vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &rawData);
+  memcpy(rawData, data.data(), bufferSize);
+  vkUnmapMemory(device, stagingBufferMemory);
+
+  createBuffer(
+    bufferSize,
+    usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    buffer,
+    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+    deviceMemory
+  );
+
+  copyBuffer(stagingBuffer, buffer, bufferSize);
+
+  vkDestroyBuffer(device, stagingBuffer, nullptr);
+  vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
+void createVertexBuffer() {
+  createAndUploadBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBuffer, vertexBufferDeviceMemory);
+}
+
+void createIndexBuffer() {
+  createAndUploadBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indexBuffer, indexBufferDeviceMemory);
 }
 
 void recordCommandBuffers() {
@@ -761,7 +881,12 @@ void recordCommandBuffers() {
     scissor.extent = { width, height };
     vkCmdSetScissor(commandBuffers[i], 0, 1, &scissor);
 
-    vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+    VkDeviceSize offsets[] = { 0 };
+    vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, &vertexBuffer, offsets);
+    vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+    //vkCmdDraw(commandBuffers[i], vertices.size(), 1, 0, 0);
+    vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
 
     vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -801,6 +926,7 @@ void startVulkan() {
   createCommandPool();
   createCommandBuffers();
   createVertexBuffer();
+  createIndexBuffer();
   recordCommandBuffers();
   createSemaphores();
 
@@ -891,6 +1017,10 @@ void gameLoop() {
 void shutdownVulkan() {
   vkDeviceWaitIdle(device);
 
+  vkFreeMemory(device, indexBufferDeviceMemory, nullptr);
+  vkDestroyBuffer(device, indexBuffer, nullptr);
+
+  vkFreeMemory(device, vertexBufferDeviceMemory, nullptr);
   vkDestroyBuffer(device, vertexBuffer, nullptr);
 
   vkDestroySemaphore(device, semaphoreImageAvailable, nullptr);
