@@ -10,6 +10,8 @@
 #include <vector>
 #include <fstream>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <chrono>
 
 #define ASSERT_VULKAN(val)\
   if (val!= VK_SUCCESS) {\
@@ -37,12 +39,20 @@ VkBuffer vertexBuffer;
 VkBuffer indexBuffer;
 VkDeviceMemory vertexBufferDeviceMemory;
 VkDeviceMemory indexBufferDeviceMemory;
+VkBuffer uniformBuffer;
+VkDeviceMemory uniformBufferMemory;
 uint32_t numberOfImagesInSwapchain = 0;
 GLFWwindow* window;
 
 uint32_t width = 400;
 uint32_t height = 300;
-const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_UNORM;
+//const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_UNORM;
+const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_SRGB;
+
+glm::mat4 MVP;
+VkDescriptorSetLayout descriptorSetLayout;
+VkDescriptorPool descriptorPool;
+VkDescriptorSet descriptorSet;
 
 class Vertex {
 public:
@@ -79,11 +89,18 @@ public:
 };
 
 std::vector<Vertex> vertices = {
-  Vertex({-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}),
-  Vertex({ 0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}),
-  Vertex({-0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}),
+  Vertex({-0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}),
+  Vertex({ 0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}),
+  Vertex({-0.5f,  0.5f}, {0.0f, 1.0f, 1.0f}),
   Vertex({ 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f})
 };
+
+//std::vector<Vertex> vertices = {
+//  Vertex({-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}),
+//  Vertex({ 0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}),
+//  Vertex({-0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}),
+//  Vertex({ 0.5f, -0.5f}, {0.0f, 1.0f, 1.0f})
+//};
 
 std::vector<uint32_t> indices = {
   0, 1, 2, 0, 3, 1
@@ -161,9 +178,10 @@ void printStats(VkPhysicalDevice& device) {
 
   std::cout << std::endl;
 
-  std::cout << "Number of FOrmats: " << numberOfFormats << std::endl;
+  std::cout << "Number of Surface Formats: " << numberOfFormats << std::endl;
   for (int i = 0; i < numberOfFormats; ++i) {
     std::cout << "Format: " << surfaceFormats[i].format << std::endl;
+    std::cout << "ColorSpace: " << surfaceFormats[i].colorSpace << std::endl;
   }
 
   uint32_t numberOfPresentationModes = 0;
@@ -492,6 +510,25 @@ void createRenderPass() {
   ASSERT_VULKAN(result);
 }
 
+void createDescriptorSetLayout() {
+  VkDescriptorSetLayoutBinding descriptorSetLayoutBinding;
+  descriptorSetLayoutBinding.binding = 0;
+  descriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorSetLayoutBinding.descriptorCount = 1;
+  descriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+
+  VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
+  descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+  descriptorSetLayoutCreateInfo.pNext = nullptr;
+  descriptorSetLayoutCreateInfo.flags = 0;
+  descriptorSetLayoutCreateInfo.bindingCount = 1;
+  descriptorSetLayoutCreateInfo.pBindings = &descriptorSetLayoutBinding;
+
+  VkResult result = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &descriptorSetLayout);
+  ASSERT_VULKAN(result);
+}
+
 void createPipeline() {
   std::vector<char> shaderCodeVert = readFile("D:/Raftek/Kame2/KameEngine/KameEngine/src/shader.vert.spv");
   std::vector<char> shaderCodeFrag = readFile("D:/Raftek/Kame2/KameEngine/KameEngine/src/shader.frag.spv");
@@ -567,7 +604,8 @@ void createPipeline() {
   rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
   rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
   rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-  rasterizationCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+  rasterizationCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+  //rasterizationCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
   rasterizationCreateInfo.depthBiasEnable = VK_FALSE;
   rasterizationCreateInfo.depthBiasConstantFactor = 0.0f;
   rasterizationCreateInfo.depthBiasClamp = 0.0f;
@@ -624,8 +662,8 @@ void createPipeline() {
   pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayoutCreateInfo.pNext = nullptr;
   pipelineLayoutCreateInfo.flags = 0;
-  pipelineLayoutCreateInfo.setLayoutCount = 0;
-  pipelineLayoutCreateInfo.pSetLayouts = nullptr;
+  pipelineLayoutCreateInfo.setLayoutCount = 1;
+  pipelineLayoutCreateInfo.pSetLayouts = &descriptorSetLayout;
   pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
   pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
@@ -841,6 +879,65 @@ void createIndexBuffer() {
   createAndUploadBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indexBuffer, indexBufferDeviceMemory);
 }
 
+void createUniformBuffer() {
+  VkDeviceSize bufferSize = sizeof(MVP);
+  createBuffer(
+    bufferSize,
+    VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+    uniformBuffer,
+    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    uniformBufferMemory
+  );
+}
+
+void createDescriptorPool() {
+  VkDescriptorPoolSize descriptorPoolSize;
+  descriptorPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorPoolSize.descriptorCount = 1;
+
+  VkDescriptorPoolCreateInfo descriptorPoolCreateInfo;
+  descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  descriptorPoolCreateInfo.pNext = nullptr;
+  descriptorPoolCreateInfo.flags = 0;
+  descriptorPoolCreateInfo.maxSets = 1;
+  descriptorPoolCreateInfo.poolSizeCount = 1;
+  descriptorPoolCreateInfo.pPoolSizes = &descriptorPoolSize;
+
+  VkResult result = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &descriptorPool);
+  ASSERT_VULKAN(result);
+}
+
+void createDescriptorSet() {
+  VkDescriptorSetAllocateInfo descriptorSetAllocateInfo;
+  descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+  descriptorSetAllocateInfo.pNext = nullptr;
+  descriptorSetAllocateInfo.descriptorPool = descriptorPool;
+  descriptorSetAllocateInfo.descriptorSetCount = 1;
+  descriptorSetAllocateInfo.pSetLayouts = &descriptorSetLayout;
+
+  VkResult result = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, &descriptorSet);
+  ASSERT_VULKAN(result);
+
+  VkDescriptorBufferInfo descriptorBufferInfo;
+  descriptorBufferInfo.buffer = uniformBuffer;
+  descriptorBufferInfo.offset = 0;
+  descriptorBufferInfo.range = sizeof(MVP);
+
+  VkWriteDescriptorSet descriptorWrite;
+  descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrite.pNext = nullptr;
+  descriptorWrite.dstSet = descriptorSet;
+  descriptorWrite.dstBinding = 0;
+  descriptorWrite.dstArrayElement = 0;
+  descriptorWrite.descriptorCount = 1;
+  descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorWrite.pImageInfo = nullptr;
+  descriptorWrite.pBufferInfo = &descriptorBufferInfo;
+  descriptorWrite.pTexelBufferView = nullptr;
+
+  vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+}
+
 void recordCommandBuffers() {
   VkCommandBufferBeginInfo commandBufferBeginInfo;
   commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -885,6 +982,8 @@ void recordCommandBuffers() {
     vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, &vertexBuffer, offsets);
     vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
+    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
+
     //vkCmdDraw(commandBuffers[i], vertices.size(), 1, 0, 0);
     vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
 
@@ -921,12 +1020,16 @@ void startVulkan() {
   createSwapchain();
   createImageViews();
   createRenderPass();
+  createDescriptorSetLayout();
   createPipeline();
   createFramebuffers();
   createCommandPool();
   createCommandBuffers();
   createVertexBuffer();
   createIndexBuffer();
+  createUniformBuffer();
+  createDescriptorPool();
+  createDescriptorSet();
   recordCommandBuffers();
   createSemaphores();
 
@@ -1007,15 +1110,43 @@ void drawFrame() {
   ASSERT_VULKAN(result);
 }
 
+auto gameStartTime = std::chrono::high_resolution_clock::now();
+void updateMVP() {
+  auto frameTime = std::chrono::high_resolution_clock::now();
+
+  float timeSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime - gameStartTime).count() / 1000.0f;
+
+  glm::mat4 model = glm::rotate(glm::mat4(1.0f), timeSinceStart * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 view = glm::lookAt(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 projection = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.01f, 10.0f);
+  projection[1][1] *= -1;
+
+  MVP = projection * view * model;
+
+  void* data;
+  vkMapMemory(device, uniformBufferMemory, 0, sizeof(MVP), 0, &data);
+  memcpy(data, &MVP, sizeof(MVP));
+  vkUnmapMemory(device, uniformBufferMemory);
+
+}
+
 void gameLoop() {
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
+
+    updateMVP();
+
     drawFrame();
   }
 }
 
 void shutdownVulkan() {
   vkDeviceWaitIdle(device);
+
+  vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
+  vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+  vkFreeMemory(device, uniformBufferMemory, nullptr);
+  vkDestroyBuffer(device, uniformBuffer, nullptr);
 
   vkFreeMemory(device, indexBufferDeviceMemory, nullptr);
   vkDestroyBuffer(device, indexBuffer, nullptr);
