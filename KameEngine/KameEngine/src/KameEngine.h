@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
+#include "EasyImage.h"
 
 
 
@@ -49,6 +50,8 @@ glm::mat4 MVP;
 VkDescriptorSetLayout descriptorSetLayout;
 VkDescriptorPool descriptorPool;
 VkDescriptorSet descriptorSet;
+
+EasyImage waterfallImage;
 
 class Vertex {
 public:
@@ -784,7 +787,12 @@ void copyBuffer(VkBuffer src, VkBuffer dest, VkDeviceSize size) {
   vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-
+void loadTexture() {
+  waterfallImage.load("D:/Raftek/Kame2/KameEngine/KameEngine/src/Waterfalls.png");
+  std::cout << waterfallImage.getWidth() << std::endl;
+  std::cout << waterfallImage.getHeight() << std::endl;
+  std::cout << waterfallImage.getSizeInBytes() << std::endl;  
+}
 
 void createVertexBuffer() {
   createAndUploadBuffer(device, physicalDevices[0], queue, commandPool, vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBuffer, vertexBufferDeviceMemory);
@@ -942,6 +950,7 @@ void startVulkan() {
   createFramebuffers();
   createCommandPool();
   createCommandBuffers();
+  loadTexture();
   createVertexBuffer();
   createIndexBuffer();
   createUniformBuffer();
@@ -1070,6 +1079,8 @@ void shutdownVulkan() {
 
   vkFreeMemory(device, vertexBufferDeviceMemory, nullptr);
   vkDestroyBuffer(device, vertexBuffer, nullptr);
+
+  waterfallImage.destroy();
 
   vkDestroySemaphore(device, semaphoreImageAvailable, nullptr);
   vkDestroySemaphore(device, semaphoreRenderingDone, nullptr);

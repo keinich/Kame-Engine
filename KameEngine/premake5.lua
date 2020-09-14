@@ -16,6 +16,7 @@ IncludeDir["GLFW"] = "KameEngine/vendor/GLFW/include"
 IncludeDir["glm"] = "KameEngine/vendor/glm"
 --IncludeDir["DirectXTex"] = "Kame/vendor/DirectXTex/DirectXTex"
 IncludeDir["Vulkan"] = "KameEngine/vendor/vulkan/include"
+IncludeDir["stb"] = "KameEngine/vendor/stb"
 
 LibDir = {}
 --LibDir["GLFW"] = "KameEngine/vendor/glfw-3.3.2.bin.WIN64/lib-vc2019"
@@ -54,7 +55,8 @@ project "KameEngine"
     --"%{IncludeDir.Glad}",
     --"%{IncludeDir.ImGui}",
     "%{IncludeDir.glm}",
-    "%{IncludeDir.Vulkan}"
+    "%{IncludeDir.Vulkan}",
+    "%{IncludeDir.stb}"
   }
 
   libdirs {
@@ -128,7 +130,8 @@ project "Sandbox"
     "KameEngine/src",
     "%{IncludeDir.GLFW}",
     "%{IncludeDir.glm}",
-    "%{IncludeDir.Vulkan}"
+    "%{IncludeDir.Vulkan}",
+    "%{IncludeDir.stb}"
   }
 
   links {
