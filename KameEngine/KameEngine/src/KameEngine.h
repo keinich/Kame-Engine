@@ -8,10 +8,12 @@
 #include <VulkanUtils.h>
 #include <vector>
 #include <fstream>
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
 #include "EasyImage.h"
+#include <DepthImage.h>
 
 
 
@@ -52,14 +54,15 @@ VkDescriptorPool descriptorPool;
 VkDescriptorSet descriptorSet;
 
 EasyImage waterfallImage;
+DepthImage depthImage;
 
 class Vertex {
 public:
-  glm::vec2 pos;
+  glm::vec3 pos;
   glm::vec3 color;
   glm::vec2 uvCoord;
 
-  Vertex(glm::vec2 posToSet, glm::vec3 colorToSet, glm::vec2 uvCoordToSet) :
+  Vertex(glm::vec3 posToSet, glm::vec3 colorToSet, glm::vec2 uvCoordToSet) :
     pos(posToSet),
     color(colorToSet),
     uvCoord(uvCoordToSet) {}
@@ -77,7 +80,7 @@ public:
     std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions(3);
     vertexInputAttributeDescriptions[0].location = 0;
     vertexInputAttributeDescriptions[0].binding = 0;
-    vertexInputAttributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+    vertexInputAttributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     vertexInputAttributeDescriptions[0].offset = offsetof(Vertex, pos);
 
     vertexInputAttributeDescriptions[1].location = 1;
@@ -95,10 +98,15 @@ public:
 };
 
 std::vector<Vertex> vertices = {
-  Vertex({-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}),
-  Vertex({ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}),
-  Vertex({ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}),
-  Vertex({-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f})
+  Vertex({-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}),
+  Vertex({ 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}),
+  Vertex({ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}),
+  Vertex({-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}),
+
+  Vertex({-0.5f, -0.5f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}),
+  Vertex({ 0.5f, -0.5f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}),
+  Vertex({ 0.5f,  0.5f, -1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}),
+  Vertex({-0.5f,  0.5f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f})
 };
 
 //std::vector<Vertex> vertices = {
@@ -109,7 +117,8 @@ std::vector<Vertex> vertices = {
 //};
 
 std::vector<uint32_t> indices = {
-  0, 1, 2, 2, 3, 0
+  0, 1, 2, 2, 3, 0,
+  4, 5, 6, 6, 7, 4
 };
 
 void printStats(VkPhysicalDevice& device) {
@@ -441,7 +450,7 @@ void createImageViews() {
 
   imageViews = new VkImageView[numberOfImagesInSwapchain];
   for (int i = 0; i < numberOfImagesInSwapchain; ++i) {
-    createImageView(device, swapchainImages[i], ourFormat, VK_IMAGE_ASPECT_COLOR_BIT, imageViews[i]);   
+    createImageView(device, swapchainImages[i], ourFormat, VK_IMAGE_ASPECT_COLOR_BIT, imageViews[i]);
   }
 
   delete[] swapchainImages;
@@ -463,6 +472,12 @@ void createRenderPass() {
   attachmentReference.attachment = 0;
   attachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+  VkAttachmentDescription depthAttachment = DepthImage::getDepthAttachment(physicalDevices[0]);
+
+  VkAttachmentReference depthAttachmentReference;
+  depthAttachmentReference.attachment = 1;
+  depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
   VkSubpassDescription subpassDescription;
   subpassDescription.flags = 0;
   subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -471,7 +486,7 @@ void createRenderPass() {
   subpassDescription.colorAttachmentCount = 1;
   subpassDescription.pColorAttachments = &attachmentReference;
   subpassDescription.pResolveAttachments = nullptr;
-  subpassDescription.pDepthStencilAttachment = nullptr;
+  subpassDescription.pDepthStencilAttachment = &depthAttachmentReference;
   subpassDescription.preserveAttachmentCount = 0;
   subpassDescription.pPreserveAttachments = nullptr;
 
@@ -484,12 +499,16 @@ void createRenderPass() {
   subpassDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
   subpassDependency.dependencyFlags = 0;
 
+  std::vector<VkAttachmentDescription> attachments;
+  attachments.push_back(attachmentDescription);
+  attachments.push_back(depthAttachment);
+
   VkRenderPassCreateInfo renderPassCreateInfo;
   renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   renderPassCreateInfo.pNext = nullptr;
   renderPassCreateInfo.flags = 0;
-  renderPassCreateInfo.attachmentCount = 1;
-  renderPassCreateInfo.pAttachments = &attachmentDescription;
+  renderPassCreateInfo.attachmentCount = attachments.size();
+  renderPassCreateInfo.pAttachments = attachments.data();
   renderPassCreateInfo.subpassCount = 1;
   renderPassCreateInfo.pSubpasses = &subpassDescription;
   renderPassCreateInfo.dependencyCount = 1;
@@ -623,6 +642,8 @@ void createPipeline() {
   multisampleCreateInfo.alphaToCoverageEnable = VK_FALSE;
   multisampleCreateInfo.alphaToOneEnable = VK_FALSE;
 
+  VkPipelineDepthStencilStateCreateInfo depthStencilStateCreateInfo = DepthImage::getDepthStencilStateCreateInfoOpaque();
+
   VkPipelineColorBlendAttachmentState colorBlendAttachmentState;
   colorBlendAttachmentState.blendEnable = VK_TRUE;
   colorBlendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
@@ -682,7 +703,7 @@ void createPipeline() {
   pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
   pipelineCreateInfo.pRasterizationState = &rasterizationCreateInfo;
   pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
-  pipelineCreateInfo.pDepthStencilState = nullptr;
+  pipelineCreateInfo.pDepthStencilState = &depthStencilStateCreateInfo;
   pipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
   pipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
   pipelineCreateInfo.layout = pipelineLayout;
@@ -698,13 +719,18 @@ void createPipeline() {
 void createFramebuffers() {
   framebuffers = new VkFramebuffer[numberOfImagesInSwapchain];
   for (size_t i = 0; i < numberOfImagesInSwapchain; ++i) {
+
+    std::vector<VkImageView> attachmentViews;
+    attachmentViews.push_back(imageViews[i]);
+    attachmentViews.push_back(depthImage.getImageView());
+
     VkFramebufferCreateInfo framebufferCreateInfo;
     framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     framebufferCreateInfo.pNext = nullptr;
     framebufferCreateInfo.flags = 0;
     framebufferCreateInfo.renderPass = renderPass;
-    framebufferCreateInfo.attachmentCount = 1;
-    framebufferCreateInfo.pAttachments = &(imageViews[i]);
+    framebufferCreateInfo.attachmentCount = attachmentViews.size();
+    framebufferCreateInfo.pAttachments = attachmentViews.data();
     framebufferCreateInfo.width = width;
     framebufferCreateInfo.height = height;
     framebufferCreateInfo.layers = 1;
@@ -723,6 +749,10 @@ void createCommandPool() {
 
   VkResult result = vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, &commandPool);
   ASSERT_VULKAN(result);
+}
+
+void createDepthImage() {
+  depthImage.create(device, physicalDevices[0], commandPool, queue, width, height);
 }
 
 void createCommandBuffers() {
@@ -778,7 +808,7 @@ void createDescriptorPool() {
   VkDescriptorPoolSize samplerPoolSize;
   samplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
   samplerPoolSize.descriptorCount = 1;
-  
+
   std::vector<VkDescriptorPoolSize> descriptorPoolSizes;
   descriptorPoolSizes.push_back(descriptorPoolSize);
   descriptorPoolSizes.push_back(samplerPoolSize);
@@ -865,9 +895,14 @@ void recordCommandBuffers() {
     renderPassBeginInfo.framebuffer = framebuffers[i];
     renderPassBeginInfo.renderArea.offset = { 0, 0 };
     renderPassBeginInfo.renderArea.extent = { width, height };
+
     VkClearValue clearValue = { 0.2f, 0.2f, 0.2f, 1.0f };
-    renderPassBeginInfo.clearValueCount = 1;
-    renderPassBeginInfo.pClearValues = &clearValue;
+    VkClearValue depthClearValue = { 1.0f, 0 };
+    std::vector<VkClearValue> clearValues;
+    clearValues.push_back(clearValue);
+    clearValues.push_back(depthClearValue);
+    renderPassBeginInfo.clearValueCount = clearValues.size();
+    renderPassBeginInfo.pClearValues = clearValues.data();
 
     vkCmdBeginRenderPass(commandBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -931,8 +966,9 @@ void startVulkan() {
   createRenderPass();
   createDescriptorSetLayout();
   createPipeline();
-  createFramebuffers();
   createCommandPool();
+  createDepthImage();
+  createFramebuffers();
   createCommandBuffers();
   loadTexture();
   createVertexBuffer();
@@ -948,17 +984,16 @@ void startVulkan() {
 void recreateSwapchain() {
   vkDeviceWaitIdle(device);
 
+  depthImage.destroy();
+
   vkFreeCommandBuffers(device, commandPool, numberOfImagesInSwapchain, commandBuffers);
   delete[] commandBuffers;
-
-  vkDestroyCommandPool(device, commandPool, nullptr);
 
   for (size_t i = 0; i < numberOfImagesInSwapchain; ++i) {
     vkDestroyFramebuffer(device, framebuffers[i], nullptr);
   }
   delete[] framebuffers;
 
-  //vkDestroyPipeline(device, pipeline, nullptr);
   vkDestroyRenderPass(device, renderPass, nullptr);
 
   for (int i = 0; i < numberOfImagesInSwapchain; ++i) {
@@ -966,18 +1001,13 @@ void recreateSwapchain() {
   }
   delete[] imageViews;
 
-  //vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-  //vkDestroyShaderModule(device, shaderModuleFrag, nullptr);
-  //vkDestroyShaderModule(device, shaderModuleVert, nullptr);
-
   VkSwapchainKHR oldSwapchain = swapchain;
 
   createSwapchain();
   createImageViews();
   createRenderPass();
-  //createPipeline();
+  createDepthImage();
   createFramebuffers();
-  createCommandPool();
   createCommandBuffers();
   recordCommandBuffers();
 
@@ -1052,6 +1082,8 @@ void gameLoop() {
 
 void shutdownVulkan() {
   vkDeviceWaitIdle(device);
+
+  depthImage.destroy();
 
   vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
   vkDestroyDescriptorPool(device, descriptorPool, nullptr);
