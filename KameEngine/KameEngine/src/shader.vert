@@ -29,7 +29,7 @@ void main() {
 
   fragColor = color;
   fragUvCoord = uvCoord;
-  fragNormal = mat3(ubo.model) * inNormal;
-  fragViewVec = (ubo.view * worldPos).xyz;
-  fragLightVec = ubo.lightPosition - vec3(worldPos);
+  fragNormal = mat3(ubo.view) * mat3(ubo.model) * inNormal;
+  fragViewVec = -(ubo.view * worldPos).xyz;
+  fragLightVec = mat3(ubo.view) * (ubo.lightPosition - vec3(worldPos));
 }

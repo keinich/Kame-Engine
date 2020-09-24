@@ -19,11 +19,14 @@ void main() {
   vec3 N = normalize(fragNormal);
   vec3 L = normalize(fragLightVec);
   vec3 V = normalize(fragViewVec);
-  vec3 R = reflect(L, N);
+  vec3 R = reflect(-L, N);
 
   vec3 ambient = fragColor * 0.1;
   vec3 diffuse = 1.0 * max(0.0, dot(N, L)) * fragColor;
   vec3 specular = pow(max(0.0, dot(R, V)), 16.0) * vec3(1.35);
 
   outColor = vec4(ambient + diffuse + specular, 1.0);
+
+//  float val = dot(N, V);
+//  outColor = vec4(val, val, val, 1.0);
 }

@@ -1028,28 +1028,32 @@ void drawFrame() {
   ASSERT_VULKAN(result);
 }
 
-auto gameStartTime = std::chrono::high_resolution_clock::now();
 void updateMVP() {
+
+  static auto gameStartTime = std::chrono::high_resolution_clock::now();
   auto frameTime = std::chrono::high_resolution_clock::now();
 
   float timeSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime - gameStartTime).count() / 1000.0f;
 
-  glm::mat4 model = glm::translate(
-    glm::rotate(
-      glm::scale(
-        glm::mat4(1.0f), glm::vec3(0.1f)
-      ),
-      timeSinceStart * glm::radians(30.0f),
-      glm::vec3(0.0f, 0.0f, 1.0f)),
-    glm::vec3(0, 0, -2)
+  glm::vec3 offset = glm::vec3(timeSinceStart * 1.0f, 0.0f, 0.0f);
+
+  glm::mat4 model = glm::mat4(1);
+  model = glm::translate(model, glm::vec3(0, 0, -0.2));
+  model = glm::translate(model, offset);
+  model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+  model = glm::rotate(model, timeSinceStart * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+  glm::mat4 view = glm::lookAt(
+    glm::vec3(1.0f, 1.0f, 1.0f) + offset, 
+    glm::vec3(0.0f, 0.0f, 0.0f) + offset, 
+    glm::vec3(0.0f, 0.0f, 1.0f)
   );
-  glm::mat4 view = glm::lookAt(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glm::mat4 projection = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.01f, 10.0f);
   projection[1][1] *= -1;
 
   float rotationSpeed = 0.0f;
-  ubo.lightPosition = glm::rotate(
-    glm::mat4(1), 
+  ubo.lightPosition = glm::vec4(offset, 0.0f) + glm::rotate(
+    glm::mat4(1),
     timeSinceStart * glm::radians(rotationSpeed),
     glm::vec3(0.0f, 0.0f, 1.0f)
   ) * glm::vec4(0, 3, 1, 0);
