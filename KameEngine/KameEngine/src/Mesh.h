@@ -33,7 +33,13 @@ public:
           vertexAttributes.vertices[3 * index.vertex_index + 1]
         };
 
-        Vertex vert(pos, glm::vec3{ 1.0f, 0.0f, 0.2f }, glm::vec2{ 0.0f, 0.0f });
+        glm::vec3 normal = {
+          vertexAttributes.normals[3 * index.normal_index + 0],
+          vertexAttributes.normals[3 * index.normal_index + 2],
+          vertexAttributes.normals[3 * index.normal_index + 1]
+        };
+
+        Vertex vert(pos, glm::vec3{ 1.0f, 0.0f, 0.2f }, glm::vec2{ 0.0f, 0.0f }, normal);
 
         if (vertices.count(vert) == 0) {
           vertices[vert] = vertices.size();

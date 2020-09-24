@@ -50,7 +50,15 @@ uint32_t height = 300;
 //const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_UNORM;
 const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
-glm::mat4 MVP;
+struct UniformBufferObject {
+  glm::mat4 model;
+  glm::mat4 view;
+  glm::mat4 projection;
+  glm::vec3 lightPosition;
+};
+
+UniformBufferObject ubo;
+
 VkDescriptorSetLayout descriptorSetLayout;
 VkDescriptorPool descriptorPool;
 VkDescriptorSet descriptorSet;
@@ -61,7 +69,7 @@ Mesh dragonMesh;
 
 
 std::vector<Vertex> vertices = {
-  Vertex({-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}),
+  /*Vertex({-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}),
   Vertex({ 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}),
   Vertex({ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}),
   Vertex({-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}),
@@ -69,7 +77,7 @@ std::vector<Vertex> vertices = {
   Vertex({-0.5f, -0.5f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}),
   Vertex({ 0.5f, -0.5f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}),
   Vertex({ 0.5f,  0.5f, -1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}),
-  Vertex({-0.5f,  0.5f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f})
+  Vertex({-0.5f,  0.5f, -1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f})*/
 };
 
 //std::vector<Vertex> vertices = {
@@ -586,7 +594,7 @@ void createPipeline() {
   rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
   rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
   rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-  rasterizationCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+  rasterizationCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
   //rasterizationCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
   rasterizationCreateInfo.depthBiasEnable = VK_FALSE;
   rasterizationCreateInfo.depthBiasConstantFactor = 0.0f;
@@ -757,7 +765,7 @@ void createIndexBuffer() {
 }
 
 void createUniformBuffer() {
-  VkDeviceSize bufferSize = sizeof(MVP);
+  VkDeviceSize bufferSize = sizeof(ubo);
   createBuffer(
     device,
     physicalDevices[0],
@@ -808,7 +816,7 @@ void createDescriptorSet() {
   VkDescriptorBufferInfo descriptorBufferInfo;
   descriptorBufferInfo.buffer = uniformBuffer;
   descriptorBufferInfo.offset = 0;
-  descriptorBufferInfo.range = sizeof(MVP);
+  descriptorBufferInfo.range = sizeof(ubo);
 
   VkWriteDescriptorSet descriptorWrite;
   descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -1039,11 +1047,20 @@ void updateMVP() {
   glm::mat4 projection = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.01f, 10.0f);
   projection[1][1] *= -1;
 
-  MVP = projection * view * model;
+  float rotationSpeed = 0.0f;
+  ubo.lightPosition = glm::rotate(
+    glm::mat4(1), 
+    timeSinceStart * glm::radians(rotationSpeed),
+    glm::vec3(0.0f, 0.0f, 1.0f)
+  ) * glm::vec4(0, 3, 1, 0);
+
+  ubo.model = model;
+  ubo.view = view;
+  ubo.projection = projection;
 
   void* data;
-  vkMapMemory(device, uniformBufferMemory, 0, sizeof(MVP), 0, &data);
-  memcpy(data, &MVP, sizeof(MVP));
+  vkMapMemory(device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);
+  memcpy(data, &ubo, sizeof(ubo));
   vkUnmapMemory(device, uniformBufferMemory);
 
 }
