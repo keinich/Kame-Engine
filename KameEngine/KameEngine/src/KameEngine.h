@@ -896,7 +896,7 @@ void recordCommandBuffers() {
     VkViewport viewport;
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    viewport.width = width;
+    viewport.width = width / 2;
     viewport.height = height;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
@@ -913,7 +913,19 @@ void recordCommandBuffers() {
 
     vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 
-    //vkCmdDraw(commandBuffers[i], vertices.size(), 1, 0, 0);
+    vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
+
+    viewport.x = width / 2;
+    vkCmdSetViewport(commandBuffers[i], 0, 1, &viewport);
+
+    usePhong = VK_FALSE;
+    vkCmdPushConstants(commandBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(usePhong), &usePhong);
+
+    vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, &vertexBuffer, offsets);
+    vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
+
     vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
 
     vkCmdEndRenderPass(commandBuffers[i]);
@@ -1052,11 +1064,11 @@ void updateMVP() {
   model = glm::rotate(model, timeSinceStart * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
   glm::mat4 view = glm::lookAt(
-    glm::vec3(1.0f, 1.0f, 1.0f) + offset, 
-    glm::vec3(0.0f, 0.0f, 0.0f) + offset, 
+    glm::vec3(1.0f, 1.0f, 1.0f) + offset,
+    glm::vec3(0.0f, 0.0f, 0.0f) + offset,
     glm::vec3(0.0f, 0.0f, 1.0f)
   );
-  glm::mat4 projection = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.01f, 10.0f);
+  glm::mat4 projection = glm::perspective(glm::radians(60.0f), ((float)width * 0.5f) / (float)height, 0.01f, 10.0f);
   projection[1][1] *= -1;
 
   float rotationSpeed = 0.0f;
