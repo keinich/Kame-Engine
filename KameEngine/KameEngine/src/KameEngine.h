@@ -30,6 +30,7 @@ VkFramebuffer* framebuffers;
 VkShaderModule shaderModuleVert;
 VkShaderModule shaderModuleFrag;
 Pipeline pipeline;
+Pipeline pipelineWireframe;
 VkRenderPass renderPass;
 VkCommandPool commandPool;
 VkCommandBuffer* commandBuffers;
@@ -351,6 +352,7 @@ void createLogicalDevice() {
 
   VkPhysicalDeviceFeatures usedFeatures = {};
   usedFeatures.samplerAnisotropy = VK_TRUE;
+  usedFeatures.fillModeNonSolid = VK_TRUE;
 
   const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -528,6 +530,10 @@ void createPipeline() {
 
   pipeline.ini(shaderModuleVert, shaderModuleFrag, width, height);
   pipeline.create(device, renderPass, descriptorSetLayout);
+
+  pipelineWireframe.ini(shaderModuleVert, shaderModuleFrag, width, height);
+  pipelineWireframe.setPolygonMode(VK_POLYGON_MODE_LINE);
+  pipelineWireframe.create(device, renderPass, descriptorSetLayout);
   
 }
 
@@ -754,16 +760,20 @@ void recordCommandBuffers() {
 
     vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
 
+
+
+    vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineWireframe.getVkPipeline());
+
     viewport.x = width / 2;
     vkCmdSetViewport(commandBuffers[i], 0, 1, &viewport);
 
     usePhong = VK_FALSE;
-    vkCmdPushConstants(commandBuffers[i], pipeline.getVkPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(usePhong), &usePhong);
+    vkCmdPushConstants(commandBuffers[i], pipelineWireframe.getVkPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(usePhong), &usePhong);
 
     vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, &vertexBuffer, offsets);
     vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
+    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineWireframe.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
 
     vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
 
@@ -970,6 +980,7 @@ void shutdownVulkan() {
   delete[] framebuffers;
 
   pipeline.destroy();
+  pipelineWireframe.destroy();
 
   vkDestroyRenderPass(device, renderPass, nullptr);
 

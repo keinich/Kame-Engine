@@ -209,6 +209,10 @@ public:
     return _PipelineLayout;
   }
 
+  void setPolygonMode(VkPolygonMode polygonMode) {
+    rasterizationCreateInfo.polygonMode = polygonMode;
+  }
+
 private:
   VkPipelineLayout _PipelineLayout = VK_NULL_HANDLE;
   VkPipeline _Pipeline = VK_NULL_HANDLE;
