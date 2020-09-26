@@ -10,6 +10,7 @@ layout(location = 4) in vec3 fragLightVec;
 layout(location = 0) out vec4 outColor;
 
 layout(binding = 1) uniform sampler2D tex;
+layout(binding = 2) uniform sampler2D normalMap;
 
 layout(push_constant) uniform PushConstants {
   bool usePhong;
@@ -20,15 +21,18 @@ void main() {
   //  outColor = vec4(fragColor, 1);
   //  outColor = texture(tex, fragUvCoord);
 
-  vec3 N = normalize(fragNormal);
+  vec3 texColor = texture(tex, fragUvCoord).xyz;
+
+  vec3 N = normalize(texture(normalMap, fragUvCoord).xyz);
+//  vec3 N = normalize(fragNormal);
   vec3 L = normalize(fragLightVec);
   vec3 V = normalize(fragViewVec);
   vec3 R = reflect(-L, N);
 
   // Phong Shading
   if (pushConts.usePhong) {
-    vec3 ambient = fragColor * 0.1;
-    vec3 diffuse = 1.0 * max(0.0, dot(N, L)) * fragColor;
+    vec3 ambient = texColor * 0.1;
+    vec3 diffuse = 1.0 * max(0.0, dot(N, L)) * texColor;
     vec3 specular = pow(max(0.0, dot(R, V)), 16.0) * vec3(1.35);
 
     outColor = vec4(ambient + diffuse + specular, 1.0);
@@ -39,9 +43,9 @@ void main() {
     } else if (dot(V, N) < 0.5) {
       outColor = vec4(0, 0, 0, 1.0);
     } else if (max(dot(N, L), 0.0) >= 0.1) {
-      outColor = vec4(fragColor, 1.0);
+      outColor = vec4(texColor, 1.0);
     } else{
-      outColor = vec4(fragColor / 5, 1.0);
+      outColor = vec4(texColor / 5, 1.0);
     }
   }
 }

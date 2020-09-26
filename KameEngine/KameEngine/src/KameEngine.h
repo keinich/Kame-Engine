@@ -17,6 +17,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
 #include <Pipeline.h>
+#include <MeshHelper.h>
 
 
 
@@ -65,6 +66,8 @@ VkDescriptorPool descriptorPool;
 VkDescriptorSet descriptorSet;
 
 EasyImage waterfallImage;
+EasyImage wallTexture;
+EasyImage wallNormalTexture;
 DepthImage depthImage;
 Mesh dragonMesh;
 
@@ -506,9 +509,17 @@ void createDescriptorSetLayout() {
   samplerDescriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
   samplerDescriptorSetLayoutBinding.pImmutableSamplers = nullptr;
 
+  VkDescriptorSetLayoutBinding samplerNormalDescriptorSetLayoutBinding;
+  samplerNormalDescriptorSetLayoutBinding.binding = 2;
+  samplerNormalDescriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  samplerNormalDescriptorSetLayoutBinding.descriptorCount = 1;
+  samplerNormalDescriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+  samplerNormalDescriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+
   std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayoutBindings;
   descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
   descriptorSetLayoutBindings.push_back(samplerDescriptorSetLayoutBinding);
+  descriptorSetLayoutBindings.push_back(samplerNormalDescriptorSetLayoutBinding);
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo;
   descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -534,7 +545,7 @@ void createPipeline() {
   pipelineWireframe.ini(shaderModuleVert, shaderModuleFrag, width, height);
   pipelineWireframe.setPolygonMode(VK_POLYGON_MODE_LINE);
   pipelineWireframe.create(device, renderPass, descriptorSetLayout);
-  
+
 }
 
 void createFramebuffers() {
@@ -598,12 +609,22 @@ void loadTexture() {
   std::cout << waterfallImage.getSizeInBytes() << std::endl;
 
   waterfallImage.upload(device, physicalDevices[0], commandPool, queue);
+
+  wallTexture.load("D:/Raftek/Kame2/KameEngine/KameEngine/src/154.JPG");
+  wallTexture.upload(device, physicalDevices[0], commandPool, queue);
+
+  wallNormalTexture.load("D:/Raftek/Kame2/KameEngine/KameEngine/src/154_norm.JPG");
+  wallNormalTexture.upload(device, physicalDevices[0], commandPool, queue);
+
 }
 
 void loadMesh() {
-  dragonMesh.create("D:/Raftek/Kame2/KameEngine/KameEngine/src/dragon.obj");
-  vertices = dragonMesh.getVertices();
-  indices = dragonMesh.getIndices();
+  //dragonMesh.create("D:/Raftek/Kame2/KameEngine/KameEngine/src/dragon.obj");
+  //vertices = dragonMesh.getVertices();
+  //indices = dragonMesh.getIndices();
+
+  vertices = getQuadVertices();
+  indices = getQuadIndices();
 }
 
 void createVertexBuffer() {
@@ -681,9 +702,16 @@ void createDescriptorSet() {
   descriptorWrite.pTexelBufferView = nullptr;
 
   VkDescriptorImageInfo descriptorImageInfo;
-  descriptorImageInfo.sampler = waterfallImage.getSampler();
-  descriptorImageInfo.imageView = waterfallImage.getImageView();
+  descriptorImageInfo.sampler = wallTexture.getSampler();
+  descriptorImageInfo.imageView = wallTexture.getImageView();
   descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+  VkDescriptorImageInfo descriptorImageInfoNormal;
+  descriptorImageInfoNormal.sampler = wallNormalTexture.getSampler();
+  descriptorImageInfoNormal.imageView = wallNormalTexture.getImageView();
+  descriptorImageInfoNormal.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+  std::vector<VkDescriptorImageInfo> descriptorImageInfos = { descriptorImageInfo, descriptorImageInfoNormal };
 
   VkWriteDescriptorSet descriptorSampler;
   descriptorSampler.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -691,9 +719,9 @@ void createDescriptorSet() {
   descriptorSampler.dstSet = descriptorSet;
   descriptorSampler.dstBinding = 1;
   descriptorSampler.dstArrayElement = 0;
-  descriptorSampler.descriptorCount = 1;
+  descriptorSampler.descriptorCount = descriptorImageInfos.size();
   descriptorSampler.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorSampler.pImageInfo = &descriptorImageInfo;
+  descriptorSampler.pImageInfo = descriptorImageInfos.data();
   descriptorSampler.pBufferInfo = nullptr;
   descriptorSampler.pTexelBufferView = nullptr;
 
@@ -909,7 +937,7 @@ void updateMVP() {
   glm::mat4 model = glm::mat4(1);
   model = glm::translate(model, glm::vec3(0, 0, -0.2));
   model = glm::translate(model, offset);
-  model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+  //model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
   model = glm::rotate(model, timeSinceStart * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
   glm::mat4 view = glm::lookAt(
@@ -965,6 +993,8 @@ void shutdownVulkan() {
   vkDestroyBuffer(device, vertexBuffer, nullptr);
 
   waterfallImage.destroy();
+  wallTexture.destroy();
+  wallNormalTexture.destroy();
 
   vkDestroySemaphore(device, semaphoreImageAvailable, nullptr);
   vkDestroySemaphore(device, semaphoreRenderingDone, nullptr);
