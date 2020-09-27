@@ -11,23 +11,16 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "KameEngine/vendor/GLFW/include"
---IncludeDir["Glad"] = "KameEngine/vendor/GLAD/include"
---IncludeDir["ImGui"] = "KameEngine/vendor/imgui"
 IncludeDir["glm"] = "KameEngine/vendor/glm"
---IncludeDir["DirectXTex"] = "Kame/vendor/DirectXTex/DirectXTex"
 IncludeDir["Vulkan"] = "KameEngine/vendor/vulkan/include"
 IncludeDir["stb"] = "KameEngine/vendor/stb"
 IncludeDir["tinyobj"] = "KameEngine/vendor/tinyobj"
+IncludeDir["spdlog"] = "KameEngine/vendor/spdlog/include"
 
 LibDir = {}
---LibDir["GLFW"] = "KameEngine/vendor/glfw-3.3.2.bin.WIN64/lib-vc2019"
 LibDir["Vulkan"] = "KameEngine/vendor/vulkan/lib"
 
 include "KameEngine/vendor/GLFW"
---include "Kame/vendor/Glad"
---include "Kame/vendor/imgui"
---include "Kame/vendor/DirectXTex/DirectXTex"
--- include 
 
 project "KameEngine"
   location "KameEngine"
@@ -51,10 +44,8 @@ project "KameEngine"
 
   includedirs {
     "%{prj.name}/src",
-    --"%{prj.name}/vendor/spdlog/include",
+    "%{IncludeDir.spdlog}",
     "%{IncludeDir.GLFW}",
-    --"%{IncludeDir.Glad}",
-    --"%{IncludeDir.ImGui}",
     "%{IncludeDir.glm}",
     "%{IncludeDir.Vulkan}",
     "%{IncludeDir.stb}",
@@ -67,9 +58,6 @@ project "KameEngine"
   
   links {
     "GLFW",
-    --"Glad",
-    --"ImGui",
-    --"DirectXTex",
     "vulkan-1.lib"
   }
 
@@ -128,8 +116,8 @@ project "Sandbox"
   }
 
   includedirs {
-    --"KameEngine/vendor/spdlog/include",
     "KameEngine/src",
+    "%{IncludeDir.spdlog}",
     "%{IncludeDir.GLFW}",
     "%{IncludeDir.glm}",
     "%{IncludeDir.Vulkan}",

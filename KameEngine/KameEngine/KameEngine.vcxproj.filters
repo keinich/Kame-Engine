@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Kame">
+      <UniqueIdentifier>{03DB877C-EF11-890D-98FE-6E108414050F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Application">
+      <UniqueIdentifier>{46B3027B-32AC-21CD-5BDE-0652473601D9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Core">
+      <UniqueIdentifier>{3B59214D-A7C3-D5C3-F001-87695CABB318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Game">
+      <UniqueIdentifier>{8C4E234D-F8B8-D7C3-41F7-8869ADA0B518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Logging">
+      <UniqueIdentifier>{990E772A-8571-06CF-2EF7-3E851A39D251}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\DepthImage.h" />
+    <ClInclude Include="src\EasyImage.h" />
+    <ClInclude Include="src\Kame\Application\Application.h">
+      <Filter>Kame\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Application\Entrypoint.h">
+      <Filter>Kame\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Core\DebugUtils.h">
+      <Filter>Kame\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Core\References.h">
+      <Filter>Kame\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Game\Game.h">
+      <Filter>Kame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\KameEngine.h">
+      <Filter>Kame</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Logging\Log.h">
+      <Filter>Kame\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KameEngine.h" />
+    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\MeshHelper.h" />
+    <ClInclude Include="src\Pipeline.h" />
+    <ClInclude Include="src\Vertex.h" />
+    <ClInclude Include="src\VulkanUtils.h" />
+    <ClInclude Include="src\kmpch.h" />
+    <ClInclude Include="src\Kame\Application\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Kame\Application\Application.cpp">
+      <Filter>Kame\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kmpch.cpp" />
+    <ClCompile Include="src\Kame\Application\Window.cpp" />
+    <ClCompile Include="src\Kame\Application\glfw\GlfwWindow.cpp" />
+    <ClCompile Include="src\Kame\Logging\Log.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shader.frag" />
+    <None Include="src\shader.vert" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,3 @@
+[submodule "KameEngine/KameEngine/vendor/spdlog"]
+	path = KameEngine/KameEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog
