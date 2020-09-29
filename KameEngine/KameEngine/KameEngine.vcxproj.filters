@@ -49,6 +49,8 @@
     <ClInclude Include="src\VulkanUtils.h" />
     <ClInclude Include="src\kmpch.h" />
     <ClInclude Include="src\Kame\Application\Window.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\Application.cpp">
@@ -58,6 +60,9 @@
     <ClCompile Include="src\Kame\Application\Window.cpp" />
     <ClCompile Include="src\Kame\Application\glfw\GlfwWindow.cpp" />
     <ClCompile Include="src\Kame\Logging\Log.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.cpp" />
+    <ClCompile Include="src\Kame\Game\Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader.frag" />

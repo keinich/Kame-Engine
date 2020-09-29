@@ -5,6 +5,8 @@
 // Kame
 #include <Kame/Core/DebugUtils.h>
 #include "Window.h"
+#include "Kame/Game/Game.h"
+#include <Kame/Graphics/GraphicsApi/GraphicsApi.h>
 
 // TODO Remove
 #include "KameEngine.h"
@@ -17,6 +19,7 @@ namespace Kame {
     KAME_ASSERT(!_Instance, "Instance is not null");
     _Instance = new Application();
 
+    GraphicsApi::Create();
     startGlfw();
     startVulkan();
   }
@@ -24,6 +27,8 @@ namespace Kame {
   void Application::Destroy() {
     shutdownVulkan();
     shutdownGlfw();
+
+    GraphicsApi::Destroy();
 
     KAME_ASSERT(_Instance, "Instance is null");
 
@@ -39,6 +44,9 @@ namespace Kame {
   void Application::ReportLiveObjects() {}
 
   int Application::Run(Reference<Game> game) {
+
+    game->Initialize();
+
     gameLoop();
 
     return 0;

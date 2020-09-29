@@ -1,11 +1,15 @@
 #pragma once
 
-namespace Kame{
+namespace Kame {
 
   class Game {
+    friend class Application;
   public:
     Game() {}
     ~Game() {}
+
+  private:
+    void Initialize();
   };
 
 }

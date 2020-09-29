@@ -9,8 +9,7 @@
 #include <Kame/Core/References.h>
 
 namespace Kame {
-    
-  class Game;
+
   class Window;
   class Input;
 
@@ -18,6 +17,8 @@ namespace Kame {
   using WindowNameMap = std::map< std::wstring, WindowPtr >;
 
   class Application {
+
+    friend class Game;
 
   public:
     static void Create();
