@@ -7,11 +7,23 @@
     <Filter Include="Kame\Application">
       <UniqueIdentifier>{46B3027B-32AC-21CD-5BDE-0652473601D9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Kame\Application\glfw">
+      <UniqueIdentifier>{C58280DE-31EF-3BD9-FAE2-D336660E5E41}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Kame\Core">
       <UniqueIdentifier>{3B59214D-A7C3-D5C3-F001-87695CABB318}</UniqueIdentifier>
     </Filter>
     <Filter Include="Kame\Game">
       <UniqueIdentifier>{8C4E234D-F8B8-D7C3-41F7-8869ADA0B518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Graphics">
+      <UniqueIdentifier>{A3B6A1B5-0F77-1DEC-D8B1-6669443162C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Graphics\GraphicsApi">
+      <UniqueIdentifier>{BDC648D1-2989-7C5B-7239-0BE8DE3A5539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Kame\Graphics\GraphicsApi\Vulkan">
+      <UniqueIdentifier>{9D3D97DA-898E-821C-B2F2-70DE9EA21586}</UniqueIdentifier>
     </Filter>
     <Filter Include="Kame\Logging">
       <UniqueIdentifier>{990E772A-8571-06CF-2EF7-3E851A39D251}</UniqueIdentifier>
@@ -26,6 +38,9 @@
     <ClInclude Include="src\Kame\Application\Entrypoint.h">
       <Filter>Kame\Application</Filter>
     </ClInclude>
+    <ClInclude Include="src\Kame\Application\Window.h">
+      <Filter>Kame\Application</Filter>
+    </ClInclude>
     <ClInclude Include="src\Kame\Core\DebugUtils.h">
       <Filter>Kame\Core</Filter>
     </ClInclude>
@@ -34,6 +49,12 @@
     </ClInclude>
     <ClInclude Include="src\Kame\Game\Game.h">
       <Filter>Kame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.h">
+      <Filter>Kame\Graphics\GraphicsApi</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\KameEngine.h">
       <Filter>Kame</Filter>
@@ -47,22 +68,31 @@
     <ClInclude Include="src\Vertex.h" />
     <ClInclude Include="src\VulkanUtils.h" />
     <ClInclude Include="src\kmpch.h" />
-    <ClInclude Include="src\Kame\Application\Window.h" />
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.h" />
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h" />
     <ClInclude Include="src\old.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\Application.cpp">
       <Filter>Kame\Application</Filter>
     </ClCompile>
+    <ClCompile Include="src\Kame\Application\Window.cpp">
+      <Filter>Kame\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Application\glfw\GlfwWindow.cpp">
+      <Filter>Kame\Application\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Game\Game.cpp">
+      <Filter>Kame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.cpp">
+      <Filter>Kame\Graphics\GraphicsApi</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.cpp">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Logging\Log.cpp">
+      <Filter>Kame\Logging</Filter>
+    </ClCompile>
     <ClCompile Include="src\kmpch.cpp" />
-    <ClCompile Include="src\Kame\Application\Window.cpp" />
-    <ClCompile Include="src\Kame\Application\glfw\GlfwWindow.cpp" />
-    <ClCompile Include="src\Kame\Logging\Log.cpp" />
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.cpp" />
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.cpp" />
-    <ClCompile Include="src\Kame\Game\Game.cpp" />
     <ClCompile Include="src\old.cpp" />
   </ItemGroup>
   <ItemGroup>
