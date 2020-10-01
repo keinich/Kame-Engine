@@ -16,6 +16,7 @@ IncludeDir["Vulkan"] = "KameEngine/vendor/vulkan/include"
 IncludeDir["stb"] = "KameEngine/vendor/stb"
 IncludeDir["tinyobj"] = "KameEngine/vendor/tinyobj"
 IncludeDir["spdlog"] = "KameEngine/vendor/spdlog/include"
+IncludeDir["volk"] = "KameEngine/vendor/volk"
 
 LibDir = {}
 LibDir["Vulkan"] = "KameEngine/vendor/vulkan/lib"
@@ -49,7 +50,8 @@ project "KameEngine"
     "%{IncludeDir.glm}",
     "%{IncludeDir.Vulkan}",
     "%{IncludeDir.stb}",
-    "%{IncludeDir.tinyobj}"
+    "%{IncludeDir.tinyobj}",
+    "%{IncludeDir.volk}"
   }
 
   libdirs {

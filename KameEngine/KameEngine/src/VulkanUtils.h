@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Kame/Graphics/GraphicsApi/Vulkan/VulkanCommon.h"
 #define GLFW_INCLUDE_VULKAN
 #include <glfw/glfw3.h>
 #include <stdexcept>

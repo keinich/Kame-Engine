@@ -273,8 +273,13 @@ void createInstance() {
   instanceInfo.enabledExtensionCount = numberOfGlfwExtensions;
   instanceInfo.ppEnabledExtensionNames = glfwExtensions;
 
-  VkResult result = vkCreateInstance(&instanceInfo, NULL, &instance);
+  VkResult result = volkInitialize();
   ASSERT_VULKAN(result);
+
+  result = vkCreateInstance(&instanceInfo, NULL, &instance);
+  ASSERT_VULKAN(result);
+
+  volkLoadInstance(instance);
 }
 
 void printInstanceLayers() {

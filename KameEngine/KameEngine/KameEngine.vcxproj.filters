@@ -53,7 +53,13 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.h">
       <Filter>Kame\Graphics\GraphicsApi</Filter>
     </ClInclude>
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Instance.h">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommon.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\KameEngine.h">
