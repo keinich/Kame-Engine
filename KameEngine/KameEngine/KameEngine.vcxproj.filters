@@ -41,7 +41,6 @@
     <ClInclude Include="src\Kame\Logging\Log.h">
       <Filter>Kame\Logging</Filter>
     </ClInclude>
-    <ClInclude Include="src\KameEngine.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshHelper.h" />
     <ClInclude Include="src\Pipeline.h" />
@@ -51,6 +50,7 @@
     <ClInclude Include="src\Kame\Application\Window.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h" />
+    <ClInclude Include="src\old.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\Application.cpp">
@@ -63,6 +63,7 @@
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.cpp" />
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.cpp" />
     <ClCompile Include="src\Kame\Game\Game.cpp" />
+    <ClCompile Include="src\old.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader.frag" />

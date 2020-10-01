@@ -9,7 +9,7 @@
 #include <Kame/Graphics/GraphicsApi/GraphicsApi.h>
 
 // TODO Remove
-#include "KameEngine.h"
+#include "old.h"
 
 namespace Kame {
 
@@ -20,13 +20,9 @@ namespace Kame {
     _Instance = new Application();
 
     GraphicsApi::Create();
-    startGlfw();
-    startVulkan();
   }
 
   void Application::Destroy() {
-    shutdownVulkan();
-    shutdownGlfw();
 
     GraphicsApi::Destroy();
 

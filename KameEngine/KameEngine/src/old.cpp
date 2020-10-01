@@ -593,9 +593,11 @@ void createCommandBuffers() {
   commandBufferAllocateInfo.pNext = nullptr;
   commandBufferAllocateInfo.commandPool = commandPool;
   commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  commandBufferAllocateInfo.commandBufferCount = numberOfImagesInSwapchain;
+  //commandBufferAllocateInfo.commandBufferCount = numberOfImagesInSwapchain;
+  commandBufferAllocateInfo.commandBufferCount = 3; // TODO : wo kommt die 3 her?
 
-  commandBuffers = new VkCommandBuffer[numberOfImagesInSwapchain];
+  //commandBuffers = new VkCommandBuffer[numberOfImagesInSwapchain];
+  commandBuffers = new VkCommandBuffer[3];
   VkResult result = vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, commandBuffers);
   ASSERT_VULKAN(result);
 }
@@ -830,19 +832,17 @@ void startVulkan() {
   physicalDevices = getAllPhysicalDevices();
   printInstanceLayers();
   printInstanceExtensions();
-  createGlfwWindowSurface();
-  printStatsOfAllPhysicalDevices();
+  
   createLogicalDevice();
   createQueue();
-  checkSurfaceSupport();
-  createSwapchain();
-  createImageViews();
+  
+  
   createRenderPass();
   createDescriptorSetLayout();
   createPipeline();
   createCommandPool();
   createDepthImage();
-  createFramebuffers();
+  
   createCommandBuffers();
   loadTexture();
   loadMesh();
@@ -851,9 +851,20 @@ void startVulkan() {
   createUniformBuffer();
   createDescriptorPool();
   createDescriptorSet();
+  
+
+  createGlfwWindowSurface();
+  checkSurfaceSupport();
+
+  createSwapchain();
+  createImageViews();
+  createFramebuffers();
+
+  printStatsOfAllPhysicalDevices();
+
+
   recordCommandBuffers();
   createSemaphores();
-
 }
 
 void recreateSwapchain() {

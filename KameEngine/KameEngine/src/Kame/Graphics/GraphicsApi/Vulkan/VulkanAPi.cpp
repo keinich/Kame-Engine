@@ -1,11 +1,20 @@
 #include "kmpch.h"
 #include "VulkanAPi.h"
 
+//TODO Remove
+#include <old.h>
+
 namespace Kame {
 
-  void VulkanApi::Initialize() {}
+  void VulkanApi::Initialize() {
+    startGlfw();
+    startVulkan();
+  }
 
-  void VulkanApi::Shutdown() {}
+  void VulkanApi::Shutdown() {
+    shutdownVulkan();
+    shutdownGlfw();
+  }
 
 }
 
