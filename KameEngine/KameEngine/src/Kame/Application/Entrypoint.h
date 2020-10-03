@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Kame/Application/Application.h>
+#include <Kame/Engine.h>
 
 extern Kame::Game* CreateGame();
 
@@ -12,14 +12,14 @@ int main(int argc, char** argv) {
   //KM_CORE_WARN("Initialized Log!");
 
   Kame::Reference<Kame::Game> game(CreateGame());
-  Kame::Application::Create(game);
+  Kame::Engine::Create(game);
 
   //std::make_shared<Kame::Tutorial4>(L"Learning DirectX 12 - Lesson 4", 1280, 720, true);
-  retCode = Kame::Application::Run();
+  retCode = Kame::Engine::Run();
 
-  Kame::Application::Destroy();
+  Kame::Engine::Destroy();
 
-  atexit(&Kame::Application::ReportLiveObjects);
+  atexit(&Kame::Engine::ReportLiveObjects);
 
   return retCode;
 }

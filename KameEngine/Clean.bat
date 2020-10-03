@@ -2,6 +2,7 @@ echo deleting file
 
 del "*.sln" /q /s
 del "*.vcxproj " /q /s
+del "*vcxproj.filters " /q /s
 del "*.user" /q /s
 
 RMDIR ".vs" /q /s

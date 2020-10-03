@@ -3,7 +3,7 @@
 namespace Kame {
 
   class Game {
-    friend class Application;
+    friend class Engine;
   public:
     Game(const char* name);
     ~Game() {}

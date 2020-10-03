@@ -16,7 +16,7 @@ namespace Kame {
   using WindowPtr = std::shared_ptr<Window>;
   using WindowNameMap = std::map< std::wstring, WindowPtr >;
 
-  class Application {
+  class Engine {
 
     friend class Game;
 
@@ -33,7 +33,7 @@ namespace Kame {
     static const char* GetGameName();
 
   private:
-    static Application* _Instance;
+    static Engine* _Instance;
 
     Reference<Game> _Game;
 

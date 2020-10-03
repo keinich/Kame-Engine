@@ -1,7 +1,7 @@
 #pragma once
 
 // Kame
-#include <Kame/KameEngine.h>
+#include <Kame/Kame.h>
 
 class Sandbox : public Kame::Game {
 public:

@@ -1,10 +1,10 @@
 #include "kmpch.h"
 
-#include "Application.h"
+#include "Engine.h"
 
 // Kame
 #include <Kame/Core/DebugUtils.h>
-#include "Window.h"
+#include "Application/Window.h"
 #include "Kame/Game/Game.h"
 #include <Kame/Graphics/GraphicsApi/GraphicsApi.h>
 
@@ -13,18 +13,18 @@
 
 namespace Kame {
 
-  Application* Application::_Instance = nullptr;
+  Engine* Engine::_Instance = nullptr;
 
-  void Application::Create(Reference<Game> game) {
+  void Engine::Create(Reference<Game> game) {
     KAME_ASSERT(!_Instance, "Instance is not null");
-    _Instance = new Application();
+    _Instance = new Engine();
 
     _Instance->_Game = game;
 
     GraphicsApi::Create();
   }
 
-  void Application::Destroy() {
+  void Engine::Destroy() {
 
     GraphicsApi::Destroy();
 
@@ -39,9 +39,9 @@ namespace Kame {
     _Instance = nullptr;
   }
 
-  void Application::ReportLiveObjects() {}
+  void Engine::ReportLiveObjects() {}
 
-  int Application::Run() {
+  int Engine::Run() {
 
     _Instance->_Game->Initialize();
 
@@ -50,7 +50,7 @@ namespace Kame {
     return 0;
   }
 
-  Reference<Window> Application::GetOrCreateWindow(const std::wstring& windowName, int width, int height, bool vSync) {
+  Reference<Window> Engine::GetOrCreateWindow(const std::wstring& windowName, int width, int height, bool vSync) {
     KAME_ASSERT(_Instance, "Application is null");
     WindowNameMap::iterator windowIt = _Instance->_WindowsByName.find(windowName);
     if (windowIt != _Instance->_WindowsByName.end()) {
@@ -61,7 +61,7 @@ namespace Kame {
     window->Create(width, height, vSync);
   }
 
-  const char* Application::GetGameName() {
+  const char* Engine::GetGameName() {
     KAME_ASSERT(_Instance, "Application is null");
     return _Instance->_Game->GetName();
   }

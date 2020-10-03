@@ -19,7 +19,7 @@
 #include <Pipeline.h>
 #include <MeshHelper.h>
 
-#include <Kame/Application/Application.h>
+#include <Kame/Engine.h>
 
 VkInstance instance;
 std::vector<VkPhysicalDevice> physicalDevices;
@@ -251,7 +251,7 @@ void createInstance() {
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   appInfo.pNext = nullptr; // Erweiterungen
   //appInfo.pApplicationName = "Kame Sandbox";
-  appInfo.pApplicationName = Kame::Application::GetGameName();
+  appInfo.pApplicationName = Kame::Engine::GetGameName();
   appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 0);
   appInfo.pEngineName = "Kame Engine";
   appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);

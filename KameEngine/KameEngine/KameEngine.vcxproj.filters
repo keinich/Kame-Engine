@@ -32,9 +32,6 @@
   <ItemGroup>
     <ClInclude Include="src\DepthImage.h" />
     <ClInclude Include="src\EasyImage.h" />
-    <ClInclude Include="src\Kame\Application\Application.h">
-      <Filter>Kame\Application</Filter>
-    </ClInclude>
     <ClInclude Include="src\Kame\Application\Entrypoint.h">
       <Filter>Kame\Application</Filter>
     </ClInclude>
@@ -53,17 +50,11 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.h">
       <Filter>Kame\Graphics\GraphicsApi</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Instance.h">
-      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommon.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Kame\KameEngine.h">
-      <Filter>Kame</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Logging\Log.h">
       <Filter>Kame\Logging</Filter>
@@ -75,11 +66,18 @@
     <ClInclude Include="src\VulkanUtils.h" />
     <ClInclude Include="src\kmpch.h" />
     <ClInclude Include="src\old.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.h">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Kame.h">
+      <Filter>Kame</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Engine.h">
+      <Filter>Kame\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Application\Platform.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Kame\Application\Application.cpp">
-      <Filter>Kame\Application</Filter>
-    </ClCompile>
     <ClCompile Include="src\Kame\Application\Window.cpp">
       <Filter>Kame\Application</Filter>
     </ClCompile>
@@ -100,6 +98,11 @@
     </ClCompile>
     <ClCompile Include="src\kmpch.cpp" />
     <ClCompile Include="src\old.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.cpp" />
+    <ClCompile Include="src\Kame\Engine.cpp">
+      <Filter>Kame\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Application\Platform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader.frag" />

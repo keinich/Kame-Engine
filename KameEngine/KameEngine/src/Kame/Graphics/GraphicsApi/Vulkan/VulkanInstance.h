@@ -1,5 +1,7 @@
 #pragma once
 
+#include "VulkanCommon.h"
+
 namespace Kame {
 
   class VulkanInstance {
@@ -7,7 +9,11 @@ namespace Kame {
     VulkanInstance();
     ~VulkanInstance();
 
-  private:
+  private: // Methods
+    void Create();
+    void Destroy();
+
+  private: // Fields
     VkInstance _VkInstance;
   };
 
