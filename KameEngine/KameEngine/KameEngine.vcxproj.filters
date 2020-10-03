@@ -76,6 +76,7 @@
       <Filter>Kame\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Application\Platform.h" />
+    <ClInclude Include="src\Kame\Application\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\Window.cpp">
@@ -103,9 +104,10 @@
       <Filter>Kame\Application</Filter>
     </ClCompile>
     <ClCompile Include="src\Kame\Application\Platform.cpp" />
+    <ClCompile Include="src\Kame\Application\FileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shader.frag" />
-    <None Include="src\shader.vert" />
+    <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\shaders\shader.frag" />
+    <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\shaders\shader.vert" />
   </ItemGroup>
 </Project>

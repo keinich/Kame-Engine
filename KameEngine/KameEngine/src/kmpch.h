@@ -16,6 +16,9 @@
 #include <filesystem>
 #include <filesystem>
 
+#include <Kame/Core/DebugUtils.h>
+#include <Kame/Core/References.h>
+
 //namespace fs = std::filesystem;
 //
 //#include <chrono>

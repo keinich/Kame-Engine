@@ -20,6 +20,7 @@
 #include <MeshHelper.h>
 
 #include <Kame/Engine.h>
+#include <Kame/Application/FileSystem.h>
 
 VkInstance instance;
 std::vector<VkPhysicalDevice> physicalDevices;
@@ -539,8 +540,8 @@ void createDescriptorSetLayout() {
 }
 
 void createPipeline() {
-  std::vector<char> shaderCodeVert = readFile("D:/Raftek/Kame2/KameEngine/KameEngine/src/shader.vert.spv");
-  std::vector<char> shaderCodeFrag = readFile("D:/Raftek/Kame2/KameEngine/KameEngine/src/shader.frag.spv");
+  std::vector<char> shaderCodeVert = readFile(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::VulkanShaders, "shader.vert.spv").c_str());
+  std::vector<char> shaderCodeFrag = readFile(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::VulkanShaders, "shader.frag.spv").c_str());
 
   createShaderModule(shaderCodeVert, &shaderModuleVert);
   createShaderModule(shaderCodeFrag, &shaderModuleFrag);
@@ -611,23 +612,26 @@ void createCommandBuffers() {
 
 
 void loadTexture() {
-  waterfallImage.load("D:/Raftek/Kame2/KameEngine/KameEngine/src/Waterfalls.png");
+  //waterfallImage.load("D:/Raftek/Kame2/KameEngine/KameEngine/Resources/Waterfalls.png");
+  waterfallImage.load(
+    Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::Assets, "Waterfalls.png").c_str()
+  );
   std::cout << waterfallImage.getWidth() << std::endl;
   std::cout << waterfallImage.getHeight() << std::endl;
   std::cout << waterfallImage.getSizeInBytes() << std::endl;
 
   waterfallImage.upload(device, physicalDevices[0], commandPool, queue);
 
-  wallTexture.load("D:/Raftek/Kame2/KameEngine/KameEngine/src/154.JPG");
+  wallTexture.load(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::Assets, "154.JPG").c_str());
   wallTexture.upload(device, physicalDevices[0], commandPool, queue);
 
-  wallNormalTexture.load("D:/Raftek/Kame2/KameEngine/KameEngine/src/154_norm.JPG");
+  wallNormalTexture.load(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::Assets, "154_norm.JPG").c_str());
   wallNormalTexture.upload(device, physicalDevices[0], commandPool, queue);
 
 }
 
 void loadMesh() {
-  dragonMesh.create("D:/Raftek/Kame2/KameEngine/KameEngine/src/dragon.obj");
+  dragonMesh.create(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::Assets, "dragon.obj").c_str());
   vertices = dragonMesh.getVertices();
   indices = dragonMesh.getIndices();
 

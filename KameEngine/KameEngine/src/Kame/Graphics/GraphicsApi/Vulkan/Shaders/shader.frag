@@ -24,7 +24,7 @@ void main() {
   vec3 texColor = texture(tex, fragUvCoord).xyz;
   vec3 N = normalize(texture(normalMap, fragUvCoord).xyz);
 //  if (!pushConts.usePhong) {
-    texColor = vec3(1.0, 0.4, 0.9);
+    texColor = vec3(1.0, 0.9, 0.4);
     N = normalize(fragNormal);
 //  }
 
