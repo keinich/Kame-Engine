@@ -5,10 +5,15 @@ namespace Kame {
   class Game {
     friend class Application;
   public:
-    Game() {}
+    Game(const char* name);
     ~Game() {}
 
-  private:
+    inline const char* GetName() { return _Name; }
+
+  private: // Fields
+    const char* _Name;
+
+  private: // Methods
     void Initialize();
   };
 

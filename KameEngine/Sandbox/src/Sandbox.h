@@ -5,6 +5,6 @@
 
 class Sandbox : public Kame::Game {
 public:
-  Sandbox() {}
+  Sandbox() : Game::Game("Sandbox") {}
   ~Sandbox() {}
 };

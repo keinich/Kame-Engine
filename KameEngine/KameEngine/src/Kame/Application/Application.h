@@ -21,17 +21,21 @@ namespace Kame {
     friend class Game;
 
   public:
-    static void Create();
+    static void Create(Reference<Game>);
     static void Destroy();
 
     static void ReportLiveObjects();
 
-    static int Run(Reference<Game> game);
+    static int Run();
 
     static Reference<Window> GetOrCreateWindow(const std::wstring& windowName, int width, int height, bool vSync = true);
 
+    static const char* GetGameName();
+
   private:
     static Application* _Instance;
+
+    Reference<Game> _Game;
 
     using WindowNameMap = std::map<std::wstring, Reference<Window>>;
     WindowNameMap _WindowsByName;

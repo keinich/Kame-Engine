@@ -15,9 +15,11 @@ namespace Kame {
 
   Application* Application::_Instance = nullptr;
 
-  void Application::Create() {
+  void Application::Create(Reference<Game> game) {
     KAME_ASSERT(!_Instance, "Instance is not null");
     _Instance = new Application();
+
+    _Instance->_Game = game;
 
     GraphicsApi::Create();
   }
@@ -39,9 +41,9 @@ namespace Kame {
 
   void Application::ReportLiveObjects() {}
 
-  int Application::Run(Reference<Game> game) {
+  int Application::Run() {
 
-    game->Initialize();
+    _Instance->_Game->Initialize();
 
     gameLoop();
 
@@ -57,6 +59,11 @@ namespace Kame {
 
     Reference<Window> window = CreateReference<Window>();
     window->Create(width, height, vSync);
+  }
+
+  const char* Application::GetGameName() {
+    KAME_ASSERT(_Instance, "Application is null");
+    return _Instance->_Game->GetName();
   }
 
 }
