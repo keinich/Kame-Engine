@@ -22,9 +22,12 @@ void main() {
   //  outColor = texture(tex, fragUvCoord);
 
   vec3 texColor = texture(tex, fragUvCoord).xyz;
-
   vec3 N = normalize(texture(normalMap, fragUvCoord).xyz);
-//  vec3 N = normalize(fragNormal);
+//  if (!pushConts.usePhong) {
+    texColor = vec3(1.0, 0.4, 0.9);
+    N = normalize(fragNormal);
+//  }
+
   vec3 L = normalize(fragLightVec);
   vec3 V = normalize(fragViewVec);
   vec3 R = reflect(-L, N);

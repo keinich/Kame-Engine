@@ -627,12 +627,12 @@ void loadTexture() {
 }
 
 void loadMesh() {
-  //dragonMesh.create("D:/Raftek/Kame2/KameEngine/KameEngine/src/dragon.obj");
-  //vertices = dragonMesh.getVertices();
-  //indices = dragonMesh.getIndices();
+  dragonMesh.create("D:/Raftek/Kame2/KameEngine/KameEngine/src/dragon.obj");
+  vertices = dragonMesh.getVertices();
+  indices = dragonMesh.getIndices();
 
-  vertices = getQuadVertices();
-  indices = getQuadIndices();
+  //vertices = getQuadVertices();
+  //indices = getQuadIndices();
 }
 
 void createVertexBuffer() {
@@ -954,7 +954,7 @@ void updateMVP() {
   glm::mat4 model = glm::mat4(1);
   model = glm::translate(model, glm::vec3(0, 0, -0.2));
   model = glm::translate(model, offset);
-  //model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+  model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
   model = glm::rotate(model, timeSinceStart * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
   glm::mat4 view = glm::lookAt(
