@@ -18,8 +18,12 @@ namespace Kame {
     return Type::Glfw;
   }
 
-  void Platform::Shutdown() {
+  void Platform::Initialize() {
+    glfwInit();
+  }
 
+  void Platform::Shutdown() {
+    glfwTerminate();
   }
 
   const char** Platform::GetRequiredVulkanInstanceExtensions(uint32_t* numberOfRequiredExtensions) {

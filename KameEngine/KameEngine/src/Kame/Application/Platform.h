@@ -21,6 +21,7 @@ namespace Kame {
     ~Platform();
 
     static Platform* CreateInstance();
+    void Initialize();
     void Shutdown();
 
   protected: //

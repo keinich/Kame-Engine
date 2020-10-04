@@ -17,7 +17,7 @@ namespace Kame {
 
     switch (_Type) {
     case GraphicsApiType::Vulkan:
-      _Instance = new VulkanApi();
+      _Instance = VulkanApi::CreateInstance();
       _Instance->Initialize();
     }
 

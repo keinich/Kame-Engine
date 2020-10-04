@@ -21,6 +21,7 @@
 
 #include <Kame/Engine.h>
 #include <Kame/Application/FileSystem.h>
+#include <Kame/Graphics/GraphicsApi/Vulkan/VulkanAPi.h>
 
 VkInstance instance;
 std::vector<VkPhysicalDevice> physicalDevices;
@@ -247,6 +248,9 @@ void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderMod
 }
 
 void createInstance() {
+
+  instance = Kame::VulkanApi::Get()->GetVkInstance();
+  return;
 
   VkApplicationInfo appInfo;
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;

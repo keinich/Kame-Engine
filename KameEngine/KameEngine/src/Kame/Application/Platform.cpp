@@ -9,6 +9,7 @@ namespace Kame {
     KAME_ASSERT(!_Instance, "Platform Instance already created!");
 
     _Instance = CreateInstance();
+    _Instance->Initialize();
 
   }
   void Platform::Destroy() {

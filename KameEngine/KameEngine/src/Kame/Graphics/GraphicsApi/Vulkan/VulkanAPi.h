@@ -11,7 +11,12 @@ namespace Kame {
 
   class VulkanApi : public GraphicsApi {
     friend class GraphicsApi;
-  public:
+  public: // Methods
+
+    inline static VulkanApi* Get() { return _Instance; };
+    static VulkanApi* CreateInstance();
+
+    inline VkInstance GetVkInstance() { return _VulkanInstance->GetVkInstance(); }
 
   protected:
     VulkanApi() {};
@@ -21,7 +26,9 @@ namespace Kame {
     virtual void Shutdown() override;
 
   private: // Fields
-    NotCopyableReference<VulkanInstance> _Instance;
+    static VulkanApi* _Instance;
+
+    NotCopyableReference<VulkanInstance> _VulkanInstance;
   };
 
 }

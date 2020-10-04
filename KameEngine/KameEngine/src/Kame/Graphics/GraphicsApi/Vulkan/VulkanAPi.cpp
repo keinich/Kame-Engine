@@ -8,8 +8,18 @@
 
 namespace Kame {
 
+  VulkanApi* VulkanApi::_Instance = nullptr;
+
+  VulkanApi* VulkanApi::CreateInstance() {
+    KAME_ASSERT(!_Instance, "VulkanApi cannot be created because it is not null");
+
+    _Instance = new VulkanApi();
+    return _Instance;
+  }
+
   void VulkanApi::Initialize() {
-    _Instance = CreateNotCopyableReference<VulkanInstance>();
+    _VulkanInstance = CreateNotCopyableReference<VulkanInstance>();
+    _VulkanInstance->Initialize();
     startGlfw();
     startVulkan();
   }

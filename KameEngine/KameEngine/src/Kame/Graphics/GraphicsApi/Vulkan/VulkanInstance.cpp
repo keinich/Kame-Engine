@@ -12,7 +12,7 @@ namespace Kame {
 
   VulkanInstance::~VulkanInstance() {}
 
-  void VulkanInstance::Create() {
+  void VulkanInstance::Initialize() {
     VkApplicationInfo appInfo;
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pNext = nullptr; // Erweiterungen
@@ -48,7 +48,7 @@ namespace Kame {
 
     volkLoadInstance(_VkInstance);
   }
-  void VulkanInstance::Destroy() {
+  void VulkanInstance::Shutdown() {
     vkDestroyInstance(_VkInstance, nullptr);
   }
 
