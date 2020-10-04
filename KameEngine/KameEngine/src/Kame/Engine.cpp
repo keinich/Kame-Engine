@@ -7,6 +7,7 @@
 #include "Application/Window.h"
 #include "Kame/Game/Game.h"
 #include <Kame/Graphics/GraphicsApi/GraphicsApi.h>
+#include <Kame/Application/Platform.h>
 
 // TODO Remove
 #include "old.h"
@@ -20,13 +21,15 @@ namespace Kame {
     _Instance = new Engine();
 
     _Instance->_Game = game;
-
+    
+    Platform::Create();
     GraphicsApi::Create();
   }
 
   void Engine::Destroy() {
 
     GraphicsApi::Destroy();
+    Platform::Destroy();
 
     KAME_ASSERT(_Instance, "Instance is null");
 
@@ -64,6 +67,10 @@ namespace Kame {
   const char* Engine::GetGameName() {
     KAME_ASSERT(_Instance, "Application is null");
     return _Instance->_Game->GetName();
+  }
+
+  const char** Engine::GetRequiredVulkanInstanceExtensions(uint32_t* numberOfExtensions) {
+    return Platform::GetRequiredVulkanInstanceExtensions(numberOfExtensions);
   }
 
 }

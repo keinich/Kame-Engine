@@ -25,6 +25,9 @@
     <Filter Include="Kame\Graphics\GraphicsApi\Vulkan">
       <UniqueIdentifier>{9D3D97DA-898E-821C-B2F2-70DE9EA21586}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Kame\Graphics\GraphicsApi\Vulkan\Shaders">
+      <UniqueIdentifier>{76AFB9E7-622C-AD2A-8BA9-AD3E778549BE}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Kame\Logging">
       <UniqueIdentifier>{990E772A-8571-06CF-2EF7-3E851A39D251}</UniqueIdentifier>
     </Filter>
@@ -35,6 +38,12 @@
     <ClInclude Include="src\Kame\Application\Entrypoint.h">
       <Filter>Kame\Application</Filter>
     </ClInclude>
+    <ClInclude Include="src\Kame\Application\FileSystem.h">
+      <Filter>Kame\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Application\Platform.h">
+      <Filter>Kame\Application</Filter>
+    </ClInclude>
     <ClInclude Include="src\Kame\Application\Window.h">
       <Filter>Kame\Application</Filter>
     </ClInclude>
@@ -43,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="src\Kame\Core\References.h">
       <Filter>Kame\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kame\Engine.h">
+      <Filter>Kame</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Game\Game.h">
       <Filter>Kame\Game</Filter>
@@ -56,6 +68,9 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommon.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.h">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Kame\Logging\Log.h">
       <Filter>Kame\Logging</Filter>
     </ClInclude>
@@ -66,24 +81,26 @@
     <ClInclude Include="src\VulkanUtils.h" />
     <ClInclude Include="src\kmpch.h" />
     <ClInclude Include="src\old.h" />
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.h">
-      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Kame\Kame.h">
+    <ClInclude Include="src\Kame.h">
       <Filter>Kame</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Engine.h">
-      <Filter>Kame\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Kame\Application\Platform.h" />
-    <ClInclude Include="src\Kame\Application\FileSystem.h" />
+    <ClInclude Include="src\Kame\Application\glfw\GlfwPlatform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Kame\Application\FileSystem.cpp">
+      <Filter>Kame\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Application\Platform.cpp">
+      <Filter>Kame\Application</Filter>
+    </ClCompile>
     <ClCompile Include="src\Kame\Application\Window.cpp">
       <Filter>Kame\Application</Filter>
     </ClCompile>
     <ClCompile Include="src\Kame\Application\glfw\GlfwWindow.cpp">
       <Filter>Kame\Application\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Kame\Engine.cpp">
+      <Filter>Kame</Filter>
     </ClCompile>
     <ClCompile Include="src\Kame\Game\Game.cpp">
       <Filter>Kame\Game</Filter>
@@ -94,20 +111,22 @@
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.cpp">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClCompile>
     <ClCompile Include="src\Kame\Logging\Log.cpp">
       <Filter>Kame\Logging</Filter>
     </ClCompile>
     <ClCompile Include="src\kmpch.cpp" />
     <ClCompile Include="src\old.cpp" />
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.cpp" />
-    <ClCompile Include="src\Kame\Engine.cpp">
-      <Filter>Kame\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Kame\Application\Platform.cpp" />
-    <ClCompile Include="src\Kame\Application\FileSystem.cpp" />
+    <ClCompile Include="src\Kame\Application\glfw\GlfwPlatform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\shaders\shader.frag" />
-    <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\shaders\shader.vert" />
+    <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan\Shaders</Filter>
+    </None>
+    <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.vert">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

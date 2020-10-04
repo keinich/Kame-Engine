@@ -11,7 +11,7 @@ namespace Kame {
 
   private: // Methods
     void Create();
-    void Destroy();
+    void Destroy();    
 
   private: // Fields
     VkInstance _VkInstance;
