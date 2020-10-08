@@ -105,7 +105,7 @@ void createAndUploadBuffer(
   VkDeviceMemory stagingBufferMemory;
   createBuffer(
     device,
-    physicalDevices[0],
+    Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(),
     bufferSize,
     VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
     stagingBuffer,
@@ -120,7 +120,7 @@ void createAndUploadBuffer(
 
   createBuffer(
     device,
-    physicalDevices[0],
+    Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(),
     bufferSize,
     usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
     buffer,

@@ -24,7 +24,7 @@
 #include <Kame/Graphics/GraphicsApi/Vulkan/VulkanAPi.h>
 
 VkInstance instance;
-std::vector<VkPhysicalDevice> physicalDevices;
+//std::vector<VkPhysicalDevice> physicalDevices;
 VkSurfaceKHR surface;
 VkDevice device;
 VkSwapchainKHR swapchain = VK_NULL_HANDLE;
@@ -215,7 +215,7 @@ void onWindowResized(GLFWwindow* window, int w, int h) {
   if (w == 0 || h == 0) return; // Do nothing
 
   VkSurfaceCapabilitiesKHR surfaceCapabilities;
-  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevices[0], surface, &surfaceCapabilities);
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), surface, &surfaceCapabilities);
 
   if (w > surfaceCapabilities.maxImageExtent.width) w = surfaceCapabilities.maxImageExtent.width;
   if (h > surfaceCapabilities.maxImageExtent.height) h = surfaceCapabilities.maxImageExtent.height;
@@ -331,27 +331,27 @@ void createGlfwWindowSurface() {
   ASSERT_VULKAN(result);
 }
 
-std::vector<VkPhysicalDevice> getAllPhysicalDevices() {
-  uint32_t physicalDeviceCount;
-  VkResult result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
-  ASSERT_VULKAN(result);
-
-  std::cout << "Number of physical devices: " << physicalDeviceCount << std::endl;
-
-  std::vector<VkPhysicalDevice> physicalDevices;
-  physicalDevices.resize(physicalDeviceCount);
-
-  result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.data());
-  ASSERT_VULKAN(result);
-
-  return physicalDevices;
-}
+//std::vector<VkPhysicalDevice> getAllPhysicalDevices() {
+//  uint32_t physicalDeviceCount;
+//  VkResult result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
+//  ASSERT_VULKAN(result);
+//
+//  std::cout << "Number of physical devices: " << physicalDeviceCount << std::endl;
+//
+//  std::vector<VkPhysicalDevice> physicalDevices;
+//  physicalDevices.resize(physicalDeviceCount);
+//
+//  result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.data());
+//  ASSERT_VULKAN(result);
+//
+//  return physicalDevices;
+//}
 
 void printStatsOfAllPhysicalDevices() {
 
-  for (int i = 0; i < physicalDevices.size(); ++i) {
-    printStats(physicalDevices[i]);
-  }
+  //for (int i = 0; i < physicalDevices.size(); ++i) {
+  //  printStats(physicalDevices[i]);
+  //}
 }
 
 void createLogicalDevice() {
@@ -385,7 +385,7 @@ void createLogicalDevice() {
   deviceCreateInfo.pEnabledFeatures = &usedFeatures;
 
   //TODO pick best device instead of first device
-  VkResult result = vkCreateDevice(physicalDevices[0], &deviceCreateInfo, nullptr, &device);
+  VkResult result = vkCreateDevice(Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), &deviceCreateInfo, nullptr, &device);
   ASSERT_VULKAN(result);
 }
 
@@ -395,7 +395,7 @@ void createQueue() {
 
 void checkSurfaceSupport() {
   VkBool32 surfaceSupport = false;
-  VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevices[0], 0, surface, &surfaceSupport);
+  VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), 0, surface, &surfaceSupport);
   ASSERT_VULKAN(result);
 
   if (!surfaceSupport) {
@@ -459,7 +459,7 @@ void createRenderPass() {
   attachmentReference.attachment = 0;
   attachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-  VkAttachmentDescription depthAttachment = DepthImage::getDepthAttachment(physicalDevices[0]);
+  VkAttachmentDescription depthAttachment = DepthImage::getDepthAttachment(Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle());
 
   VkAttachmentReference depthAttachmentReference;
   depthAttachmentReference.attachment = 1;
@@ -595,7 +595,7 @@ void createCommandPool() {
 }
 
 void createDepthImage() {
-  depthImage.create(device, physicalDevices[0], commandPool, queue, width, height);
+  depthImage.create(device, Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), commandPool, queue, width, height);
 }
 
 void createCommandBuffers() {
@@ -624,13 +624,13 @@ void loadTexture() {
   std::cout << waterfallImage.getHeight() << std::endl;
   std::cout << waterfallImage.getSizeInBytes() << std::endl;
 
-  waterfallImage.upload(device, physicalDevices[0], commandPool, queue);
+  waterfallImage.upload(device, Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), commandPool, queue);
 
   wallTexture.load(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::Assets, "154.JPG").c_str());
-  wallTexture.upload(device, physicalDevices[0], commandPool, queue);
+  wallTexture.upload(device, Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), commandPool, queue);
 
   wallNormalTexture.load(Kame::FileSystem::Path::GetPath(Kame::FileSystem::Path::Type::Assets, "154_norm.JPG").c_str());
-  wallNormalTexture.upload(device, physicalDevices[0], commandPool, queue);
+  wallNormalTexture.upload(device, Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), commandPool, queue);
 
 }
 
@@ -644,18 +644,18 @@ void loadMesh() {
 }
 
 void createVertexBuffer() {
-  createAndUploadBuffer(device, physicalDevices[0], queue, commandPool, vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBuffer, vertexBufferDeviceMemory);
+  createAndUploadBuffer(device, Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), queue, commandPool, vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBuffer, vertexBufferDeviceMemory);
 }
 
 void createIndexBuffer() {
-  createAndUploadBuffer(device, physicalDevices[0], queue, commandPool, indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indexBuffer, indexBufferDeviceMemory);
+  createAndUploadBuffer(device, Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(), queue, commandPool, indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indexBuffer, indexBufferDeviceMemory);
 }
 
 void createUniformBuffer() {
   VkDeviceSize bufferSize = sizeof(ubo);
   createBuffer(
     device,
-    physicalDevices[0],
+    Kame::VulkanApi::Get()->GetInstance().GetBestPhysicalDevice().GetHandle(),
     bufferSize,
     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
     uniformBuffer,
@@ -843,7 +843,8 @@ void createSemaphores() {
 void startVulkan() {
 
   createInstance();
-  physicalDevices = getAllPhysicalDevices();
+  //
+  //physicalDevices = getAllPhysicalDevices();
   printInstanceLayers();
   printInstanceExtensions();
   

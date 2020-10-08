@@ -12,6 +12,10 @@ namespace Kame {
 
   VulkanInstance::~VulkanInstance() {}
 
+  VulkanPhysicalDevice& VulkanInstance::GetBestPhysicalDevice() {
+    return *(_PhysicalDevices.at(0));
+  }
+
   void VulkanInstance::Initialize() {
     VkApplicationInfo appInfo;
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -47,10 +51,30 @@ namespace Kame {
     ASSERT_VULKAN(result);
 
     volkLoadInstance(_VkInstance);
+
+    QueryGpus();
   }
   void VulkanInstance::Shutdown() {
     vkDestroyInstance(_VkInstance, nullptr);
   }
 
+  void VulkanInstance::QueryGpus() {
+    uint32_t physicalDeviceCount;
+    VkResult result = vkEnumeratePhysicalDevices(_VkInstance, &physicalDeviceCount, nullptr);
+    ASSERT_VULKAN(result);
+
+    std::cout << "Number of physical devices: " << physicalDeviceCount << std::endl;
+
+    std::vector<VkPhysicalDevice> physicalDevices;
+    physicalDevices.resize(physicalDeviceCount);
+
+    result = vkEnumeratePhysicalDevices(_VkInstance, &physicalDeviceCount, physicalDevices.data());
+    ASSERT_VULKAN(result);
+
+    for each (VkPhysicalDevice physicalDevice in physicalDevices) {
+      _PhysicalDevices.push_back(CreateNotCopyableReference<VulkanPhysicalDevice>(physicalDevice));
+    }
+
+  }
 
 }

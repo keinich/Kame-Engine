@@ -16,6 +16,7 @@ namespace Kame {
     inline static VulkanApi* Get() { return _Instance; };
     static VulkanApi* CreateInstance();
 
+    inline VulkanInstance& GetInstance() { return *_VulkanInstance; }
     inline VkInstance GetVkInstance() { return _VulkanInstance->GetVkInstance(); }
 
   protected:
