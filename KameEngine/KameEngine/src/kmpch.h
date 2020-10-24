@@ -18,6 +18,7 @@
 
 #include <Kame/Core/DebugUtils.h>
 #include <Kame/Core/References.h>
+#include <Kame/Logging/Log.h>
 
 //namespace fs = std::filesystem;
 //

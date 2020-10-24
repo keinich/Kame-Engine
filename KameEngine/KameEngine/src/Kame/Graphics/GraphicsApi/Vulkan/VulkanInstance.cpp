@@ -13,7 +13,16 @@ namespace Kame {
   VulkanInstance::~VulkanInstance() {}
 
   VulkanPhysicalDevice& VulkanInstance::GetBestPhysicalDevice() {
-    return *(_PhysicalDevices.at(0));
+    KAME_ASSERT(!_PhysicalDevices.empty(), "No physical devices!");
+
+    for (auto& gpu : _PhysicalDevices) {
+      if (gpu->GetProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+        return *gpu;
+      }
+    }
+
+    KM_CORE_ERROR("No discrete physical device found!");
+    return *_PhysicalDevices.at(0);
   }
 
   void VulkanInstance::Initialize() {
