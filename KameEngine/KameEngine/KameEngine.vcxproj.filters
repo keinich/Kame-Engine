@@ -85,6 +85,8 @@
       <Filter>Kame</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Application\glfw\GlfwPlatform.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanPhyiscalDevice.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">
@@ -120,6 +122,8 @@
     <ClCompile Include="src\kmpch.cpp" />
     <ClCompile Include="src\old.cpp" />
     <ClCompile Include="src\Kame\Application\glfw\GlfwPlatform.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanPhyiscalDevice.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">

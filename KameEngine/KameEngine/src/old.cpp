@@ -842,7 +842,7 @@ void createSemaphores() {
 
 void startVulkan() {
 
-  createInstance();
+  createInstance(); //Done
   //
   //physicalDevices = getAllPhysicalDevices();
   printInstanceLayers();

@@ -11,9 +11,10 @@ namespace Kame {
 
     inline VkPhysicalDevice GetHandle() { return _Handle; }
 
-    VkPhysicalDeviceFeatures GetFeatures();
-    VkPhysicalDeviceProperties GetProperties();
-    VkPhysicalDeviceMemoryProperties GetMemoryProperties();
+    const VkPhysicalDeviceFeatures &GetFeatures() const;
+    const VkPhysicalDeviceProperties GetProperties() const;
+    const VkPhysicalDeviceMemoryProperties GetMemoryProperties() const;
+    const std::vector<VkQueueFamilyProperties>& GetQueueFamilyProperties() const;
 
   private: // Methods
     void Initialize();
@@ -24,6 +25,7 @@ namespace Kame {
     VkPhysicalDeviceFeatures _Features;
     VkPhysicalDeviceProperties _Properties;
     VkPhysicalDeviceMemoryProperties _MemoryProperties;
+    std::vector<VkQueueFamilyProperties> _QueueFamilyProperties;
   };
 
 }

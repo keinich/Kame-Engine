@@ -9,20 +9,30 @@ namespace Kame {
     vkGetPhysicalDeviceFeatures(_Handle, &_Features);
     vkGetPhysicalDeviceProperties(_Handle, &_Properties);
     vkGetPhysicalDeviceMemoryProperties(_Handle, &_MemoryProperties);
+
+    uint32_t numberOfQueueFamilies = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(handle, &numberOfQueueFamilies, nullptr);
+    _QueueFamilyProperties = std::vector< VkQueueFamilyProperties>(numberOfQueueFamilies);
+    vkGetPhysicalDeviceQueueFamilyProperties(handle, &numberOfQueueFamilies, _QueueFamilyProperties.data());
+
   }
 
   VulkanPhysicalDevice::~VulkanPhysicalDevice() {}
 
-  VkPhysicalDeviceFeatures VulkanPhysicalDevice::GetFeatures() {
+  const VkPhysicalDeviceFeatures &VulkanPhysicalDevice::GetFeatures() const {
     return _Features;
   }
 
-  VkPhysicalDeviceProperties VulkanPhysicalDevice::GetProperties() {
+  const VkPhysicalDeviceProperties VulkanPhysicalDevice::GetProperties() const {
     return _Properties;
   }
 
-  VkPhysicalDeviceMemoryProperties VulkanPhysicalDevice::GetMemoryProperties() {
+  const VkPhysicalDeviceMemoryProperties VulkanPhysicalDevice::GetMemoryProperties() const{
     return _MemoryProperties;
+  }
+
+  const std::vector<VkQueueFamilyProperties>& VulkanPhysicalDevice::GetQueueFamilyProperties() const {
+    return _QueueFamilyProperties;
   }
 
   void VulkanPhysicalDevice::Initialize() {
