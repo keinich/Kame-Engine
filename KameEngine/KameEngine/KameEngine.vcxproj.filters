@@ -87,6 +87,8 @@
     <ClInclude Include="src\Kame\Application\glfw\GlfwPlatform.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanPhyiscalDevice.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanException.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">
@@ -124,6 +126,8 @@
     <ClCompile Include="src\Kame\Application\glfw\GlfwPlatform.cpp" />
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanPhyiscalDevice.cpp" />
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanException.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">

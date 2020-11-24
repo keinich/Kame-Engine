@@ -19,6 +19,10 @@ namespace Kame {
   private: // Fields
     VkDevice _Handle{ VK_NULL_HANDLE };
     std::vector<VkExtensionProperties> _DeviceExtensions;
+    std::vector<const char*> _EnabledExtensions{};
+
+  private: // Methods
+    bool isExtensionSupported(const std::string& requestedExtension);
 
   };
 

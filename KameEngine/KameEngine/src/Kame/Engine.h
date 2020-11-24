@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <vector>
 
 //Kame
 #include <Kame/Core/References.h>
@@ -33,6 +34,7 @@ namespace Kame {
 
     static const char* GetGameName();
     static const char** GetRequiredVulkanInstanceExtensions(uint32_t* numberOfExtensions);
+    static const std::vector<const char*> GetRequiredVulkanInstanceValidationLayers();
 
   private:
     static Engine* _Instance;

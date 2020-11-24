@@ -21,7 +21,8 @@ namespace Kame {
     _Instance = new Engine();
 
     _Instance->_Game = game;
-    
+
+    Log::Init();
     Platform::Create();
     GraphicsApi::Create();
   }
@@ -71,6 +72,12 @@ namespace Kame {
 
   const char** Engine::GetRequiredVulkanInstanceExtensions(uint32_t* numberOfExtensions) {
     return Platform::GetRequiredVulkanInstanceExtensions(numberOfExtensions);
+  }
+
+  const std::vector<const char*> Engine::GetRequiredVulkanInstanceValidationLayers() {
+    return {
+      "VK_LAYER_KHRONOS_validation"
+    };
   }
 
 }

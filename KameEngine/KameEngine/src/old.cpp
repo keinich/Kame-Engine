@@ -1050,7 +1050,7 @@ void shutdownVulkan() {
   vkDestroySwapchainKHR(device, swapchain, nullptr);
   vkDestroyDevice(device, nullptr);
   vkDestroySurfaceKHR(instance, surface, nullptr);
-  vkDestroyInstance(instance, nullptr);
+  //vkDestroyInstance(instance, nullptr);
 }
 
 void shutdownGlfw() {

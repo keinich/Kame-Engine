@@ -1,9 +1,12 @@
 #include "kmpch.h"
 #include "VulkanPhyiscalDevice.h"
 
+#include "VulkanInstance.h"
+
 namespace Kame {
 
-  VulkanPhysicalDevice::VulkanPhysicalDevice(VkPhysicalDevice handle) {
+  VulkanPhysicalDevice::VulkanPhysicalDevice(VulkanInstance& instance, VkPhysicalDevice handle) :
+    _Instance(instance) {
     _Handle = handle;
 
     vkGetPhysicalDeviceFeatures(_Handle, &_Features);
@@ -19,7 +22,7 @@ namespace Kame {
 
   VulkanPhysicalDevice::~VulkanPhysicalDevice() {}
 
-  const VkPhysicalDeviceFeatures &VulkanPhysicalDevice::GetFeatures() const {
+  const VkPhysicalDeviceFeatures& VulkanPhysicalDevice::GetFeatures() const {
     return _Features;
   }
 
@@ -27,12 +30,16 @@ namespace Kame {
     return _Properties;
   }
 
-  const VkPhysicalDeviceMemoryProperties VulkanPhysicalDevice::GetMemoryProperties() const{
+  const VkPhysicalDeviceMemoryProperties VulkanPhysicalDevice::GetMemoryProperties() const {
     return _MemoryProperties;
   }
 
   const std::vector<VkQueueFamilyProperties>& VulkanPhysicalDevice::GetQueueFamilyProperties() const {
     return _QueueFamilyProperties;
+  }
+
+  void* VulkanPhysicalDevice::GetExtensionFeatureChain() const {
+    return _LastRequestedExtensionFeature;
   }
 
   void VulkanPhysicalDevice::Initialize() {

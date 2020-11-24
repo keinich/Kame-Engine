@@ -19,13 +19,14 @@ namespace Kame {
 
   void VulkanApi::Initialize() {
     _VulkanInstance = CreateNotCopyableReference<VulkanInstance>();
-    _VulkanInstance->Initialize();
+    _VulkanInstance->Initialize(true);
     startGlfw();
     startVulkan();
   }
 
   void VulkanApi::Shutdown() {
     shutdownVulkan();
+    _VulkanInstance->Shutdown();
     shutdownGlfw();
   }
 

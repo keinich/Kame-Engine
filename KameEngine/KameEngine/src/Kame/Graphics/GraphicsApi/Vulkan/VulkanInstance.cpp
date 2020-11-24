@@ -25,7 +25,104 @@ namespace Kame {
     return *_PhysicalDevices.at(0);
   }
 
-  void VulkanInstance::Initialize() {
+  void VulkanInstance::Initialize(bool headless) {
+
+    VkResult result = volkInitialize();
+    ASSERT_VULKAN(result);
+
+    // Get the available Instance extensions
+    uint32_t numberOfInstanceExtensions;
+    result = vkEnumerateInstanceExtensionProperties(nullptr, &numberOfInstanceExtensions, nullptr);
+    ASSERT_VULKAN(result);
+
+    std::vector<VkExtensionProperties> availableInstanceExtensions(numberOfInstanceExtensions);
+    result = vkEnumerateInstanceExtensionProperties(nullptr, &numberOfInstanceExtensions, availableInstanceExtensions.data());
+
+#if defined(KAME_DEBUG)
+    bool debugUtils = false;
+    for (VkExtensionProperties& availableExtension : availableInstanceExtensions) {
+      if (strcmp(availableExtension.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0) {
+        debugUtils = true;
+        KM_CORE_INFO("{} is available, enabling it", VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        _EnabledExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+      }
+    }
+    if (!debugUtils) {
+      _EnabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+    }
+#endif
+
+    // Headless surface extension
+    if (headless) {
+      bool headlessExtensionAvailable = false;
+      for (VkExtensionProperties& availableExtension : availableInstanceExtensions) {
+        if (strcmp(availableExtension.extensionName, VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME) == 0) {
+          headlessExtensionAvailable = true;
+          KM_CORE_INFO("{} is available, enabling it", VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME);
+          _EnabledExtensions.push_back(VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME);
+        }
+      }
+      if (!headlessExtensionAvailable) {
+        KM_CORE_WARN("{} is not available, disabling swapchain cration", VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME);
+      }
+    }
+    else {
+      _EnabledExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+    }
+
+    for (VkExtensionProperties& availableExtension : availableInstanceExtensions) {
+      if (strcmp(availableExtension.extensionName, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) == 0) {
+        KM_CORE_INFO(" {} is available, enabling it", VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+        _EnabledExtensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+      }
+    }
+
+    // Check if all the required instance extensions are available
+    uint32_t numberOfRequiredExtensions = 0;
+    auto requiredExtensions = Engine::GetRequiredVulkanInstanceExtensions(&numberOfRequiredExtensions);
+    bool requiredExtensionsMissing = false;
+    for (int i = 0; i < numberOfRequiredExtensions; ++i) {
+      const char* extension = requiredExtensions[i];
+      bool extensionIsUnavailable = std::find_if(
+        availableInstanceExtensions.begin(), availableInstanceExtensions.end(),
+        [&extension](VkExtensionProperties availableExtension) {
+          return strcmp(availableExtension.extensionName, extension) == 0;
+        }
+      ) == availableInstanceExtensions.end();
+      if (extensionIsUnavailable) {
+        KM_CORE_ERROR("Required extension {} is unavailable, cannot run", extension);
+        requiredExtensionsMissing = true;
+      }
+      else {
+        _EnabledExtensions.push_back(extension);
+      }
+    }
+    if (requiredExtensionsMissing) {
+      throw std::runtime_error("Required instance extensions are missing.");
+    }
+
+    uint32_t numberOfInstanceLayers;
+    result = vkEnumerateInstanceLayerProperties(&numberOfInstanceLayers, nullptr);
+    ASSERT_VULKAN(result);
+
+    std::vector<VkLayerProperties> supportedValidationLayers(numberOfInstanceLayers);
+    result = vkEnumerateInstanceLayerProperties(&numberOfInstanceLayers, supportedValidationLayers.data());
+    ASSERT_VULKAN(result);
+
+    const std::vector<const char*>& requiredValidationLayers = Engine::GetRequiredVulkanInstanceValidationLayers();
+    std::vector<const char*> requestedValidationLayers(requiredValidationLayers);
+
+    if (ValidateLayers(requiredValidationLayers, supportedValidationLayers)) {
+      KM_CORE_INFO("Enabled Validation Layers:");
+      for (const char* const& layer : requestedValidationLayers) {
+        KM_CORE_INFO(" \t{}", layer);
+      }
+    }
+    else {
+      throw std::runtime_error("Required validation layers are missing!");
+    }
+
+    // old
     VkApplicationInfo appInfo;
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pNext = nullptr; // Erweiterungen
@@ -40,21 +137,22 @@ namespace Kame {
       "VK_LAYER_KHRONOS_validation"
     };
 
-    uint32_t numberOfRequiredExtensions = 0;
-    auto requiredExtensions = Engine::GetRequiredVulkanInstanceExtensions(&numberOfRequiredExtensions);
+    numberOfRequiredExtensions = 0;
+    requiredExtensions = Engine::GetRequiredVulkanInstanceExtensions(&numberOfRequiredExtensions);
 
     VkInstanceCreateInfo instanceInfo;
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.pNext = nullptr; // Erweiterungen
     instanceInfo.flags = 0; // noch keine Verwendung
     instanceInfo.pApplicationInfo = &appInfo;
-    instanceInfo.enabledLayerCount = validationLayers.size();
-    instanceInfo.ppEnabledLayerNames = validationLayers.data();
-    instanceInfo.enabledExtensionCount = numberOfRequiredExtensions;
-    instanceInfo.ppEnabledExtensionNames = requiredExtensions;
+    instanceInfo.enabledLayerCount = requiredValidationLayers.size();
+    instanceInfo.ppEnabledLayerNames = requiredValidationLayers.data();
+    //instanceInfo.enabledExtensionCount = numberOfRequiredExtensions;
+    instanceInfo.enabledExtensionCount = _EnabledExtensions.size();    
+    //instanceInfo.ppEnabledExtensionNames = requiredExtensions;
+    instanceInfo.ppEnabledExtensionNames = _EnabledExtensions.data();
 
-    VkResult result = volkInitialize();
-    ASSERT_VULKAN(result);
+
 
     result = vkCreateInstance(&instanceInfo, NULL, &_VkInstance);
     ASSERT_VULKAN(result);
@@ -63,6 +161,7 @@ namespace Kame {
 
     QueryGpus();
   }
+
   void VulkanInstance::Shutdown() {
     vkDestroyInstance(_VkInstance, nullptr);
   }
@@ -81,9 +180,29 @@ namespace Kame {
     ASSERT_VULKAN(result);
 
     for each (VkPhysicalDevice physicalDevice in physicalDevices) {
-      _PhysicalDevices.push_back(CreateNotCopyableReference<VulkanPhysicalDevice>(physicalDevice));
+      _PhysicalDevices.push_back(CreateNotCopyableReference<VulkanPhysicalDevice>(*this, physicalDevice));
     }
 
+  }
+
+  bool VulkanInstance::ValidateLayers(
+    const std::vector<const char*>& requiredLayers,
+    const std::vector<VkLayerProperties>& availableLayers
+  ) {
+    for (const char* layer : requiredLayers) {
+      bool found = false;
+      for (const VkLayerProperties& availableLayer : availableLayers) {
+        if (strcmp(availableLayer.layerName, layer) == 0) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        KM_CORE_ERROR("Validation Layer {} not found", layer);
+        return false;
+      }
+    }
+    return true;
   }
 
 }
