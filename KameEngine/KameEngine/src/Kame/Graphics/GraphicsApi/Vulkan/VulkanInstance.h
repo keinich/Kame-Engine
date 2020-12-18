@@ -18,9 +18,11 @@ namespace Kame {
 
     VulkanPhysicalDevice& GetBestPhysicalDevice();
 
-    bool isEnabled(const char* extension) const {
-      //return std::find_if(_EnabledExtensions)
-      return true;
+    bool IsEnabled(const char* extension) const {
+      return std::find_if(_EnabledExtensions.begin(), _EnabledExtensions.end(),
+        [extension](const char* enableExtension) {
+          return strcmp(extension, enableExtension) == 0;
+        }) != _EnabledExtensions.end();
     }
 
   private: // Methods

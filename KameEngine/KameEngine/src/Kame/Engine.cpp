@@ -65,6 +65,8 @@ namespace Kame {
     window->Create(width, height, vSync);
   }
 
+#pragma region " Vulkan specific stuff "
+
   const char* Engine::GetGameName() {
     KAME_ASSERT(_Instance, "Application is null");
     return _Instance->_Game->GetName();
@@ -79,5 +81,7 @@ namespace Kame {
       "VK_LAYER_KHRONOS_validation"
     };
   }
+ 
+#pragma endregion 
 
 }

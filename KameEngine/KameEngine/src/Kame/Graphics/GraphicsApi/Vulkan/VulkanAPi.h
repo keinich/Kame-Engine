@@ -4,6 +4,7 @@
 #include <Kame/Core/References.h>
 #include "../GraphicsApi.h"
 #include "VulkanInstance.h"
+#include "VulkanDevice.h"
 
 namespace Kame {
 
@@ -19,6 +20,12 @@ namespace Kame {
     inline VulkanInstance& GetInstance() { return *_VulkanInstance; }
     inline VkInstance GetVkInstance() { return _VulkanInstance->GetVkInstance(); }
 
+    inline VulkanDevice& GetDevice() { return *_VulkanDevice; }
+    inline VkDevice GetVkDevice() { return _VulkanDevice->GetHandle(); }
+
+    void AddDeviceExtension(const char* extension, bool optional = false);
+    const std::unordered_map<const char*, bool> GetDeviceExtensions();
+
   protected:
     VulkanApi() {};
     ~VulkanApi() {};
@@ -30,6 +37,9 @@ namespace Kame {
     static VulkanApi* _Instance;
 
     NotCopyableReference<VulkanInstance> _VulkanInstance;
+    NotCopyableReference<VulkanDevice> _VulkanDevice;
+      
+    std::unordered_map<const char*, bool> _DeviceExtensions;
   };
 
 }

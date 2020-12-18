@@ -355,6 +355,9 @@ void printStatsOfAllPhysicalDevices() {
 }
 
 void createLogicalDevice() {
+
+  device = Kame::VulkanApi::Get()->GetVkDevice();
+  return;
   float queuePrios[] = { 1.0f, 1.0f, 1.0f, 1.0f };
   VkDeviceQueueCreateInfo deviceQueueCreateInfo;
   deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -1048,7 +1051,7 @@ void shutdownVulkan() {
   vkDestroyShaderModule(device, shaderModuleFrag, nullptr);
   vkDestroyShaderModule(device, shaderModuleVert, nullptr);
   vkDestroySwapchainKHR(device, swapchain, nullptr);
-  vkDestroyDevice(device, nullptr);
+  //vkDestroyDevice(device, nullptr);
   vkDestroySurfaceKHR(instance, surface, nullptr);
   //vkDestroyInstance(instance, nullptr);
 }

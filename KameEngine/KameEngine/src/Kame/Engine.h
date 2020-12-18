@@ -33,6 +33,9 @@ namespace Kame {
     static Reference<Window> GetOrCreateWindow(const std::wstring& windowName, int width, int height, bool vSync = true);
 
     static const char* GetGameName();
+
+    // Vulkan specific stuff, that is required by the game the engine is running
+    // TODO get this out of the game settings!
     static const char** GetRequiredVulkanInstanceExtensions(uint32_t* numberOfExtensions);
     static const std::vector<const char*> GetRequiredVulkanInstanceValidationLayers();
 

@@ -126,7 +126,6 @@ namespace Kame {
     VkApplicationInfo appInfo;
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pNext = nullptr; // Erweiterungen
-    //appInfo.pApplicationName = "Kame Sandbox";
     appInfo.pApplicationName = Engine::GetGameName();
     appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 0);
     appInfo.pEngineName = "Kame Engine";
@@ -147,12 +146,8 @@ namespace Kame {
     instanceInfo.pApplicationInfo = &appInfo;
     instanceInfo.enabledLayerCount = requiredValidationLayers.size();
     instanceInfo.ppEnabledLayerNames = requiredValidationLayers.data();
-    //instanceInfo.enabledExtensionCount = numberOfRequiredExtensions;
-    instanceInfo.enabledExtensionCount = _EnabledExtensions.size();    
-    //instanceInfo.ppEnabledExtensionNames = requiredExtensions;
+    instanceInfo.enabledExtensionCount = _EnabledExtensions.size();  
     instanceInfo.ppEnabledExtensionNames = _EnabledExtensions.data();
-
-
 
     result = vkCreateInstance(&instanceInfo, NULL, &_VkInstance);
     ASSERT_VULKAN(result);

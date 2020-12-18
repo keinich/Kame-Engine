@@ -18,16 +18,32 @@ namespace Kame {
   }
 
   void VulkanApi::Initialize() {
+
+    //TODO add extensions according to the game!
+    AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+
     _VulkanInstance = CreateNotCopyableReference<VulkanInstance>();
     _VulkanInstance->Initialize(true);
+    _VulkanDevice = CreateNotCopyableReference<VulkanDevice>();
+    _VulkanDevice->Initialize(_VulkanInstance->GetBestPhysicalDevice(), GetDeviceExtensions());
+    
     startGlfw();
     startVulkan();
   }
 
   void VulkanApi::Shutdown() {
     shutdownVulkan();
+    _VulkanDevice->Shutdown();
     _VulkanInstance->Shutdown();
     shutdownGlfw();
+  }
+
+  void VulkanApi::AddDeviceExtension(const char* extension, bool optional) {
+    _DeviceExtensions[extension] = optional;
+  }
+
+  const std::unordered_map<const char*, bool> VulkanApi::GetDeviceExtensions() {
+    return _DeviceExtensions;
   }
 
 }

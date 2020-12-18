@@ -42,6 +42,10 @@ namespace Kame {
     return _LastRequestedExtensionFeature;
   }
 
+  const VkPhysicalDeviceFeatures VulkanPhysicalDevice::GetRequestedFeatures() const {
+    return _RequestedFeatures;
+  }
+
   void VulkanPhysicalDevice::Initialize() {
 
   }

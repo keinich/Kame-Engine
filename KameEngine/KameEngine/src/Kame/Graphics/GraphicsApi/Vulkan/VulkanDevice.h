@@ -9,12 +9,17 @@ namespace Kame {
 
   class VulkanDevice {
   public:
-    VulkanDevice(VulkanPhysicalDevice& gpu, VkSurfaceKHR surface, std::unordered_map<const char*, bool> reqeuestedExtensions = {});
+    VulkanDevice();
     VulkanDevice(const VulkanDevice&) = delete;
     VulkanDevice(VulkanDevice&&) = delete;
     ~VulkanDevice();
     VulkanDevice &operator=(const VulkanDevice&) = delete;
     VulkanDevice &operator=(VulkanDevice&&) = delete;
+
+    void Initialize(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> reqeuestedExtensions = {});
+    void Shutdown();
+
+    inline VkDevice GetHandle() { return _Handle; }
 
   private: // Fields
     VkDevice _Handle{ VK_NULL_HANDLE };
@@ -22,7 +27,7 @@ namespace Kame {
     std::vector<const char*> _EnabledExtensions{};
 
   private: // Methods
-    bool isExtensionSupported(const std::string& requestedExtension);
+    bool IsExtensionSupported(const std::string& requestedExtension);
 
   };
 

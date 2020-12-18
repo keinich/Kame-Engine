@@ -5,9 +5,10 @@
 
 namespace Kame {
 
-  VulkanDevice::VulkanDevice(
+  VulkanDevice::VulkanDevice() {}
+
+  void VulkanDevice::Initialize(
     VulkanPhysicalDevice& gpu,
-    VkSurfaceKHR surface,
     std::unordered_map<const char*, bool> requestedExtensions
   ) {
     uint32_t numberOfQueueFamilies = gpu.GetQueueFamilyProperties().size();
@@ -39,8 +40,9 @@ namespace Kame {
       }
     }
 
-    bool getMemoryRequirementsSupported = isExtensionSupported("VK_KHR_get_memory_requirements2");
-    bool dedicatedAllocationSupported = isExtensionSupported("VK_KHR_dedicated_allocation");
+    // Dedicated Allocation Extensions
+    bool getMemoryRequirementsSupported = IsExtensionSupported("VK_KHR_get_memory_requirements2");
+    bool dedicatedAllocationSupported = IsExtensionSupported("VK_KHR_dedicated_allocation");
 
     if (getMemoryRequirementsSupported && dedicatedAllocationSupported) {
       _EnabledExtensions.push_back("VK_KHR_get_memory_requirements2");
@@ -49,10 +51,12 @@ namespace Kame {
       KM_INFO("Dedicated Allocation enabled");
     }
 
+    //TODO Performance Query Extensions
+
     // Check tat extensions are supported before trying to create the device
     std::vector<const char*> unsopportedExtensions{};
     for (std::pair<const char* const, bool>& extension : requestedExtensions) {
-      if (isExtensionSupported(extension.first)) {
+      if (IsExtensionSupported(extension.first)) {
         _EnabledExtensions.emplace_back(extension.first);
       }
       else {
@@ -62,7 +66,7 @@ namespace Kame {
 
     if (_EnabledExtensions.size() > 0) {
       KM_INFO("Device supports the following requested extensions:");
-      for (const char* &extension : _EnabledExtensions) {
+      for (const char*& extension : _EnabledExtensions) {
         KM_INFO(" \t{}", extension);
       }
     }
@@ -85,8 +89,27 @@ namespace Kame {
       }
     }
 
-    VkDeviceQueueCreateInfo createInfo{ VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO };
+    VkDeviceCreateInfo createInfo{ VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO };
     createInfo.pNext = gpu.GetExtensionFeatureChain();
+
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
+    createInfo.queueCreateInfoCount = queueCreateInfos.size();
+    createInfo.enabledExtensionCount = _EnabledExtensions.size();
+    createInfo.ppEnabledExtensionNames = _EnabledExtensions.data();
+    createInfo.pEnabledFeatures = &(gpu.GetRequestedFeatures());
+
+
+
+
+    VkPhysicalDeviceFeatures usedFeatures1 = {};
+    usedFeatures1.samplerAnisotropy = VK_TRUE;
+    usedFeatures1.fillModeNonSolid = VK_TRUE;
+
+    createInfo.pEnabledFeatures = &usedFeatures1;
+
+    result = vkCreateDevice(gpu.GetHandle(), &createInfo, nullptr, &_Handle);
+    ASSERT_VULKAN(result);
+    return;
 
     // old
     float queuePrios[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -123,14 +146,18 @@ namespace Kame {
     ASSERT_VULKAN(result);
   }
 
+  void VulkanDevice::Shutdown() {
+    vkDestroyDevice(_Handle, nullptr);
+  }
+
   VulkanDevice::~VulkanDevice() {}
 
-  bool VulkanDevice::isExtensionSupported(const std::string& requestedExtension) {
+  bool VulkanDevice::IsExtensionSupported(const std::string& requestedExtension) {
     return std::find_if(
-      _DeviceExtensions.begin(), _DeviceExtensions.end(), 
+      _DeviceExtensions.begin(), _DeviceExtensions.end(),
       [requestedExtension](auto& deviceExtension) {
-      return std::strcmp(deviceExtension.extensionName, requestedExtension.c_str()) == 0;
-    }) != _DeviceExtensions.end();
+        return std::strcmp(deviceExtension.extensionName, requestedExtension.c_str()) == 0;
+      }) != _DeviceExtensions.end();
   }
 
 }
