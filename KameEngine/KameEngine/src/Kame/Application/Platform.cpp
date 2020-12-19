@@ -9,18 +9,20 @@ namespace Kame {
     KAME_ASSERT(!_Instance, "Platform Instance already created!");
 
     _Instance = CreateInstance();
-    _Instance->Initialize();
+    _Instance->InitializeInstance();
 
   }
   void Platform::Destroy() {
     KAME_ASSERT(_Instance, "Platform Instance cannot be destroyed because it is null!");
 
-    _Instance->Shutdown();
+    _Instance->ShutdownInstance();
 
     delete _Instance;
     _Instance = nullptr;
   }
+
   Platform::Platform() {}
 
   Platform::~Platform() {}
+
 }

@@ -25,7 +25,7 @@ namespace Kame {
     return *_PhysicalDevices.at(0);
   }
 
-  void VulkanInstance::Initialize(bool headless) {
+  void VulkanInstance::Init(bool headless) {
 
     VkResult result = volkInitialize();
     ASSERT_VULKAN(result);

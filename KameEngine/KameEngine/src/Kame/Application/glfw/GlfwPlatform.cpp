@@ -18,11 +18,11 @@ namespace Kame {
     return Type::Glfw;
   }
 
-  void Platform::Initialize() {
+  void Platform::InitializeInstance() {
     glfwInit();
   }
 
-  void Platform::Shutdown() {
+  void Platform::ShutdownInstance() {
     glfwTerminate();
   }
 

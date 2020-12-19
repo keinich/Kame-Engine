@@ -13,15 +13,23 @@ namespace Kame {
 
   public:
 
+    /// <summary>
+    /// Creates the singleton instance and prepares it so that windows can be created.
+    /// </summary>
     static void Create();
     static void Destroy();
+
+    /// <summary>
+    /// Initializes the singleton instance after Platform and Main Window have been created.
+    /// </summary>
+    static void Init();
 
   protected:
 
     GraphicsApi() {};
     ~GraphicsApi() {};
 
-    virtual void Initialize() = 0;
+    virtual void InitInstance() = 0;
     virtual void Shutdown() = 0;
 
   private: // Fields

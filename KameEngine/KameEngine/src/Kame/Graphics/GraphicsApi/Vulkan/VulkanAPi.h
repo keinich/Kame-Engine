@@ -30,7 +30,7 @@ namespace Kame {
     VulkanApi() {};
     ~VulkanApi() {};
 
-    virtual void Initialize() override;
+    virtual void InitInstance() override;
     virtual void Shutdown() override;
 
   private: // Fields

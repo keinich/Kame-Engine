@@ -25,6 +25,7 @@ namespace Kame {
     Log::Init();
     Platform::Create();
     GraphicsApi::Create();
+    GraphicsApi::Init();
   }
 
   void Engine::Destroy() {

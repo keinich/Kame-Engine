@@ -10,9 +10,16 @@ namespace Kame {
       Win32
     };
 
+    /// <summary>
+    /// Creates and initializes the singleton instance.
+    /// </summary>
     static void Create();
-    static void Destroy();
 
+    /// <summary>
+    /// Shuts down and destroys the singleton instance.    
+    /// </summary>
+    static void Destroy();
+        
     Type GetType();
     static const char** GetRequiredVulkanInstanceExtensions(uint32_t* numberOfRequiredInstanceExtensions);    
 
@@ -21,11 +28,12 @@ namespace Kame {
     ~Platform();
 
     static Platform* CreateInstance();
-    void Initialize();
-    void Shutdown();
+    void InitializeInstance();
+    void ShutdownInstance();
 
-  protected: //
+  protected: // Fields
     static Platform* _Instance;
+        
   };
 
 }

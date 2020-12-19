@@ -4,6 +4,7 @@
 
 #include "VulkanCommon.h"
 #include "VulkanPhyiscalDevice.h"
+#include "VulkanQueue.h"
 
 namespace Kame {
 
@@ -16,7 +17,7 @@ namespace Kame {
     VulkanDevice &operator=(const VulkanDevice&) = delete;
     VulkanDevice &operator=(VulkanDevice&&) = delete;
 
-    void Initialize(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> reqeuestedExtensions = {});
+    void Init(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> reqeuestedExtensions = {});
     void Shutdown();
 
     inline VkDevice GetHandle() { return _Handle; }
@@ -29,6 +30,7 @@ namespace Kame {
   private: // Methods
     bool IsExtensionSupported(const std::string& requestedExtension);
 
+    std::vector<std::vector<VulkanQueue>> _Queues;
   };
 
 }

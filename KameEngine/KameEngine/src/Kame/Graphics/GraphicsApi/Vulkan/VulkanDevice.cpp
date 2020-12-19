@@ -7,7 +7,7 @@ namespace Kame {
 
   VulkanDevice::VulkanDevice() {}
 
-  void VulkanDevice::Initialize(
+  void VulkanDevice::Init(
     VulkanPhysicalDevice& gpu,
     std::unordered_map<const char*, bool> requestedExtensions
   ) {
@@ -98,9 +98,7 @@ namespace Kame {
     createInfo.ppEnabledExtensionNames = _EnabledExtensions.data();
     createInfo.pEnabledFeatures = &(gpu.GetRequestedFeatures());
 
-
-
-
+    //TODO get requested Features according to the game
     VkPhysicalDeviceFeatures usedFeatures1 = {};
     usedFeatures1.samplerAnisotropy = VK_TRUE;
     usedFeatures1.fillModeNonSolid = VK_TRUE;
@@ -109,41 +107,16 @@ namespace Kame {
 
     result = vkCreateDevice(gpu.GetHandle(), &createInfo, nullptr, &_Handle);
     ASSERT_VULKAN(result);
-    return;
+   
+    // Create the queues
+    _Queues.resize(numberOfQueueFamilies);
 
-    //// old
-    //float queuePrios[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    //VkDeviceQueueCreateInfo deviceQueueCreateInfo;
-    //deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    //deviceQueueCreateInfo.pNext = nullptr;
-    //deviceQueueCreateInfo.flags = 0;
-    //deviceQueueCreateInfo.queueFamilyIndex = 0; //TODO eigentlich beste aussuchen
-    //deviceQueueCreateInfo.queueCount = 1; //TODO prüfen, ob 4 gehen
-    //deviceQueueCreateInfo.pQueuePriorities = queuePrios; // alle haben die gleiche Prio, sonst Array von floats
+    for (uint32_t queueFamilyIndex = 0U; queueFamilyIndex < numberOfQueueFamilies; ++queueFamilyIndex) {
+      const VkQueueFamilyProperties& queueFamilyProperty = gpu.GetQueueFamilyProperties()[queueFamilyIndex];
 
-    //VkPhysicalDeviceFeatures usedFeatures = {};
-    //usedFeatures.samplerAnisotropy = VK_TRUE;
-    //usedFeatures.fillModeNonSolid = VK_TRUE;
+      //VkBool32 presentSupported = gpu.IsPresentSupported(surface, queueFamilyIndex);
+    }
 
-    //const std::vector<const char*> deviceExtensions = {
-    //  VK_KHR_SWAPCHAIN_EXTENSION_NAME
-    //};
-
-    //VkDeviceCreateInfo deviceCreateInfo;
-    //deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    //deviceCreateInfo.pNext = nullptr;
-    //deviceCreateInfo.flags = 0;
-    //deviceCreateInfo.queueCreateInfoCount = 1;
-    //deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
-    //deviceCreateInfo.enabledLayerCount = 0;
-    //deviceCreateInfo.ppEnabledLayerNames = nullptr;
-    //deviceCreateInfo.enabledExtensionCount = deviceExtensions.size();
-    //deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
-    //deviceCreateInfo.pEnabledFeatures = &usedFeatures;
-
-    ////TODO pick best device instead of first device
-    //result = vkCreateDevice(gpu.GetHandle(), &deviceCreateInfo, nullptr, &_Handle);
-    //ASSERT_VULKAN(result);
   }
 
   void VulkanDevice::Shutdown() {

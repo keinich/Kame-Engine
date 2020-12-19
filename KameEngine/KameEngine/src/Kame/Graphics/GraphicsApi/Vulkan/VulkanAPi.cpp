@@ -14,18 +14,20 @@ namespace Kame {
     KAME_ASSERT(!_Instance, "VulkanApi cannot be created because it is not null");
 
     _Instance = new VulkanApi();
+
+    _Instance->_VulkanInstance = CreateNotCopyableReference<VulkanInstance>();
+    _Instance->_VulkanInstance->Init(true);
+
     return _Instance;
   }
 
-  void VulkanApi::Initialize() {
+  void VulkanApi::InitInstance() {
 
     //TODO add extensions according to the game!
     AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-
-    _VulkanInstance = CreateNotCopyableReference<VulkanInstance>();
-    _VulkanInstance->Initialize(true);
+  
     _VulkanDevice = CreateNotCopyableReference<VulkanDevice>();
-    _VulkanDevice->Initialize(_VulkanInstance->GetBestPhysicalDevice(), GetDeviceExtensions());
+    _VulkanDevice->Init(_VulkanInstance->GetBestPhysicalDevice(), GetDeviceExtensions());
     
     startGlfw();
     startVulkan();

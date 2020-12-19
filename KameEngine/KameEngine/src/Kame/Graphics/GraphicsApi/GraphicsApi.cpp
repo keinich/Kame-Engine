@@ -16,9 +16,8 @@ namespace Kame {
     _Type = GraphicsApiType::Vulkan;
 
     switch (_Type) {
-    case GraphicsApiType::Vulkan:
-      _Instance = VulkanApi::CreateInstance();
-      _Instance->Initialize();
+      case GraphicsApiType::Vulkan:
+        _Instance = VulkanApi::CreateInstance();
     }
 
   }
@@ -28,6 +27,9 @@ namespace Kame {
     _Instance->Shutdown();
     delete _Instance;
     _Instance = nullptr;
+  }
+  void GraphicsApi::Init() {
+    _Instance->InitInstance();
   }
 }
 

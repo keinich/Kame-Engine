@@ -26,7 +26,7 @@ namespace Kame {
     }
 
   private: // Methods
-    void Initialize(bool headless);
+    void Init(bool headless);
     void Shutdown();
 
     void QueryGpus();
