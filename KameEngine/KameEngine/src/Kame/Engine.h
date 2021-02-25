@@ -11,12 +11,8 @@
 
 namespace Kame {
 
-  class Window;
   class Input;
   class Platform;
-
-  using WindowPtr = std::shared_ptr<Window>;
-  using WindowNameMap = std::map< std::wstring, WindowPtr >;
 
   class Engine {
 
@@ -30,8 +26,6 @@ namespace Kame {
 
     static int Run();
 
-    static Reference<Window> GetOrCreateWindow(const std::wstring& windowName, int width, int height, bool vSync = true);
-
     static const char* GetGameName();
 
     // Vulkan specific stuff, that is required by the game the engine is running
@@ -43,10 +37,6 @@ namespace Kame {
     static Engine* _Instance;
 
     Reference<Game> _Game;
-
-    using WindowNameMap = std::map<std::wstring, Reference<Window>>;
-    WindowNameMap _WindowsByName;
-
   };
 
 }

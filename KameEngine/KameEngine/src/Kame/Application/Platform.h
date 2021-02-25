@@ -2,6 +2,8 @@
 
 namespace Kame {
 
+  class Window;
+
   class Platform {
 
   public:
@@ -16,12 +18,21 @@ namespace Kame {
     static void Create();
 
     /// <summary>
-    /// Shuts down and destroys the singleton instance.    
+    /// Shuts down and destroys the singleton instance.
     /// </summary>
     static void Destroy();
-        
+
     Type GetType();
-    static const char** GetRequiredVulkanInstanceExtensions(uint32_t* numberOfRequiredInstanceExtensions);    
+
+    static void CreateMainWindow(int width, int height, bool vSync = true);
+    static const Reference<Window> GetMainWindow();
+
+    static Reference<Window> CreateRenderWindow(const std::string& name, int width, int height, bool vSync = true);
+    static void DestroyRenderWindow(const std::string& name);
+
+    static const Reference<Window> GetRenderWindow(const std::string& name);
+
+    static const char** GetRequiredVulkanInstanceExtensions(uint32_t* numberOfRequiredInstanceExtensions);
 
   protected: // Methods
     Platform();
@@ -31,9 +42,12 @@ namespace Kame {
     void InitializeInstance();
     void ShutdownInstance();
 
+    Reference<Window> CreatePlatformWindow(const std::string& name, int width, int height, bool vSync = true);
+
   protected: // Fields
     static Platform* _Instance;
-        
+
+    std::map<std::string, Reference<Window>> _WindowsByName;
   };
 
 }

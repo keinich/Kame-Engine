@@ -25,6 +25,9 @@ namespace Kame {
     Log::Init();
     Platform::Create();
     GraphicsApi::Create();
+
+    // TODO game settings to get resolution
+    Platform::CreateMainWindow(800, 600);
     GraphicsApi::Init();
   }
 
@@ -34,11 +37,6 @@ namespace Kame {
     Platform::Destroy();
 
     KAME_ASSERT(_Instance, "Instance is null");
-
-    KAME_ASSERT(
-      _Instance->_WindowsByName.empty(),
-      "All windows should be destroyed before destroying the application instance."
-    );
 
     delete _Instance;
     _Instance = nullptr;
@@ -53,17 +51,6 @@ namespace Kame {
     gameLoop();
 
     return 0;
-  }
-
-  Reference<Window> Engine::GetOrCreateWindow(const std::wstring& windowName, int width, int height, bool vSync) {
-    KAME_ASSERT(_Instance, "Application is null");
-    WindowNameMap::iterator windowIt = _Instance->_WindowsByName.find(windowName);
-    if (windowIt != _Instance->_WindowsByName.end()) {
-      return windowIt->second;
-    }
-
-    Reference<Window> window = CreateReference<Window>();
-    window->Create(width, height, vSync);
   }
 
 #pragma region " Vulkan specific stuff "
@@ -82,7 +69,7 @@ namespace Kame {
       "VK_LAYER_KHRONOS_validation"
     };
   }
- 
+
 #pragma endregion 
 
 }

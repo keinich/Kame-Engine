@@ -90,6 +90,7 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanException.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanQueue.h" />
+    <ClInclude Include="src\Kame\Application\glfw\GlfwWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">

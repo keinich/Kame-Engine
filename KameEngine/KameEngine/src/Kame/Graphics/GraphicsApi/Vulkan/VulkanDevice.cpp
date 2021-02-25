@@ -114,6 +114,7 @@ namespace Kame {
     for (uint32_t queueFamilyIndex = 0U; queueFamilyIndex < numberOfQueueFamilies; ++queueFamilyIndex) {
       const VkQueueFamilyProperties& queueFamilyProperty = gpu.GetQueueFamilyProperties()[queueFamilyIndex];
 
+
       //VkBool32 presentSupported = gpu.IsPresentSupported(surface, queueFamilyIndex);
     }
 
