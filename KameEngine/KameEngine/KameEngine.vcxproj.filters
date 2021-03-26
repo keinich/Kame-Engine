@@ -91,6 +91,8 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.h" />
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanQueue.h" />
     <ClInclude Include="src\Kame\Application\glfw\GlfwWindow.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanSurface.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">
@@ -131,6 +133,7 @@
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanException.cpp" />
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.cpp" />
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanQueue.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">

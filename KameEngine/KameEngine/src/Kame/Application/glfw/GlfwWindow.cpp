@@ -20,8 +20,13 @@ namespace Kame {
     return true;
   }
 
-  void GlfwWindow::Destroy() {
+  void GlfwWindow::DestroyInternal() {
     glfwDestroyWindow(_Handle);
+  }
+
+  void GlfwWindow::CreateSurface(Reference<Surface> surface) {
+    surface->CreateFromGlfwWindow(_Handle);
+    _Surface = surface;
   }
 
   GlfwWindow::GlfwWindow() : Window() {

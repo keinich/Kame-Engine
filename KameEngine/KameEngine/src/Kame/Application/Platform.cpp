@@ -3,6 +3,7 @@
 
 // Kame
 #include "Window.h"
+#include "Kame/Graphics/GraphicsApi/GraphicsApi.h"
 
 namespace Kame {
 
@@ -18,7 +19,7 @@ namespace Kame {
   void Platform::Destroy() {
     KAME_ASSERT(_Instance, "Platform Instance cannot be destroyed because it is null!");
 
-    DestroyRenderWindow("Main Window");
+    //DestroyRenderWindow("Main Window");
 
     KAME_ASSERT(
       _Instance->_WindowsByName.empty(),
@@ -43,6 +44,7 @@ namespace Kame {
     }
 
     Reference<Window> window = me->CreateRenderWindow("Main Window", width, height, vSync);
+    GraphicsApi::CreateWindowSurface(window);
 
     me->_WindowsByName.insert(std::map<std::string, Reference<Window>>::value_type("Main Window", window));
 

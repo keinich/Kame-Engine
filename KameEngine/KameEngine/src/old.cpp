@@ -22,6 +22,8 @@
 #include <Kame/Engine.h>
 #include <Kame/Application/FileSystem.h>
 #include <Kame/Graphics/GraphicsApi/Vulkan/VulkanAPi.h>
+#include <Kame/Application/Platform.h>
+#include <Kame/Graphics/GraphicsApi/Vulkan/VulkanSurface.h>
 
 VkInstance instance;
 //std::vector<VkPhysicalDevice> physicalDevices;
@@ -327,6 +329,10 @@ void printInstanceExtensions() {
 }
 
 void createGlfwWindowSurface() {
+
+  //Kame::VulkanSurface* vulkanSurface = (Kame::VulkanSurface *) Kame::Platform::GetMainWindow()->GetSurface().get();
+  //surface = vulkanSurface->GetHandle();
+  //return;
   VkResult result = glfwCreateWindowSurface(instance, window, nullptr, &surface);
   ASSERT_VULKAN(result);
 }
@@ -850,17 +856,17 @@ void startVulkan() {
   //physicalDevices = getAllPhysicalDevices();
   printInstanceLayers();
   printInstanceExtensions();
-  
+
   createLogicalDevice();
   createQueue();
-  
-  
+
+
   createRenderPass();
   createDescriptorSetLayout();
   createPipeline();
   createCommandPool();
   createDepthImage();
-  
+
   createCommandBuffers();
   loadTexture();
   loadMesh();
@@ -869,7 +875,7 @@ void startVulkan() {
   createUniformBuffer();
   createDescriptorPool();
   createDescriptorSet();
-  
+
 
   createGlfwWindowSurface();
   checkSurfaceSupport();

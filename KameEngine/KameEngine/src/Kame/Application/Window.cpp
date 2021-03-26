@@ -18,5 +18,10 @@ namespace Kame {
     _VSync = vSync;
     _Created = PlatformCreate(name, width, height, vSync);
   }
+  void Window::Destroy()  {
+    _Surface->Destroy();
+    DestroyInternal();
+  }
+
 }
 

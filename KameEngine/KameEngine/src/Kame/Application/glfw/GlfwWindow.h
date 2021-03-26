@@ -17,7 +17,9 @@ namespace Kame {
     GlfwWindow& operator=(const GlfwWindow&) = delete;
     GlfwWindow& operator=(GlfwWindow&&) = delete;
 
-    virtual void Destroy() override;
+    virtual void DestroyInternal() override;
+
+    virtual void CreateSurface(Reference<Surface> surface) override;
 
   private: // Fields
     GLFWwindow* _Handle;

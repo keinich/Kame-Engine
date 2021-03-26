@@ -1,4 +1,5 @@
 #pragma once
+#include <Kame/Graphics/GraphicsApi/Surface.h>
 
 namespace Kame {
 
@@ -14,7 +15,15 @@ namespace Kame {
     Window& operator=(Window&&) = delete;
 
     void Create(const std::string& name, int width, int height, bool vSync = true);
-    virtual void Destroy() = 0;
+    void Destroy();
+    virtual void DestroyInternal() = 0;
+
+    virtual void CreateSurface(Reference<Surface> surface) = 0;
+    virtual inline Reference<Surface> GetSurface() { return _Surface; };
+
+  protected: // Fields
+
+    Reference<Surface> _Surface;
 
   private: // Fields
     int _Width;

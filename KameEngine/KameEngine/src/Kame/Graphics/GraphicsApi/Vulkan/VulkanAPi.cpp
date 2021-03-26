@@ -5,6 +5,7 @@
 
 //TODO Remove
 #include <old.h>
+#include <Kame/Graphics/GraphicsApi/Vulkan/VulkanSurface.h>
 
 namespace Kame {
 
@@ -25,10 +26,10 @@ namespace Kame {
 
     //TODO add extensions according to the game!
     AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-  
+
     _VulkanDevice = CreateNotCopyableReference<VulkanDevice>();
     _VulkanDevice->Init(_VulkanInstance->GetBestPhysicalDevice(), GetDeviceExtensions());
-    
+
     startGlfw();
     startVulkan();
   }
@@ -38,6 +39,11 @@ namespace Kame {
     _VulkanDevice->Shutdown();
     _VulkanInstance->Shutdown();
     shutdownGlfw();
+  }
+
+  void VulkanApi::CreateWindowSurfaceInternal(Reference<Window> window) {
+    Reference<Surface> surface = CreateReference<VulkanSurface>();
+    window->CreateSurface(surface);
   }
 
   void VulkanApi::AddDeviceExtension(const char* extension, bool optional) {

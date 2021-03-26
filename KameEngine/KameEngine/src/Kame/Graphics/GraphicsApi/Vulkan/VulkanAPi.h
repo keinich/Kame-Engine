@@ -33,6 +33,8 @@ namespace Kame {
     virtual void InitInstance() override;
     virtual void Shutdown() override;
 
+    virtual void CreateWindowSurfaceInternal(Reference<Window> window) override;
+
   private: // Fields
     static VulkanApi* _Instance;
 

@@ -28,8 +28,13 @@ namespace Kame {
     delete _Instance;
     _Instance = nullptr;
   }
+
   void GraphicsApi::Init() {
     _Instance->InitInstance();
   }
-}
 
+  void GraphicsApi::CreateWindowSurface(Reference<Window> window) {
+    _Instance->CreateWindowSurfaceInternal(window);
+  }
+
+}

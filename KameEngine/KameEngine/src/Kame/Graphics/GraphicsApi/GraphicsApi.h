@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kame/Application/Window.h"
+
 namespace Kame {
 
   enum class GraphicsApiType {
@@ -24,6 +26,8 @@ namespace Kame {
     /// </summary>
     static void Init();
 
+    static void CreateWindowSurface(Reference<Window> window);
+
   protected:
 
     GraphicsApi() {};
@@ -31,6 +35,7 @@ namespace Kame {
 
     virtual void InitInstance() = 0;
     virtual void Shutdown() = 0;
+    virtual void CreateWindowSurfaceInternal(Reference<Window> window) = 0;
 
   private: // Fields
     static GraphicsApi* _Instance;
