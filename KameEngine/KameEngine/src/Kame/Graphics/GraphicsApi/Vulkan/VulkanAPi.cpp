@@ -30,7 +30,7 @@ namespace Kame {
     _VulkanDevice = CreateNotCopyableReference<VulkanDevice>();
     _VulkanDevice->Init(_VulkanInstance->GetBestPhysicalDevice(), GetDeviceExtensions());
 
-    startGlfw();
+    //startGlfw();
     startVulkan();
   }
 

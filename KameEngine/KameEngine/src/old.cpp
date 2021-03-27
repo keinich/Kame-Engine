@@ -24,6 +24,7 @@
 #include <Kame/Graphics/GraphicsApi/Vulkan/VulkanAPi.h>
 #include <Kame/Application/Platform.h>
 #include <Kame/Graphics/GraphicsApi/Vulkan/VulkanSurface.h>
+#include <Kame/Application/glfw/GlfwWindow.h>
 
 VkInstance instance;
 //std::vector<VkPhysicalDevice> physicalDevices;
@@ -51,8 +52,8 @@ VkDeviceMemory uniformBufferMemory;
 uint32_t numberOfImagesInSwapchain = 0;
 GLFWwindow* window;
 
-uint32_t width = 400;
-uint32_t height = 300;
+uint32_t width = 800;
+uint32_t height = 600;
 //const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_UNORM;
 const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
@@ -229,11 +230,13 @@ void onWindowResized(GLFWwindow* window, int w, int h) {
 
 void startGlfw() {
 
-  glfwInit();
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  //glfwInit();
+  //glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
   //glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-  window = glfwCreateWindow(width, height, "Kame Engine", nullptr, nullptr);
+  //window = glfwCreateWindow(width, height, "Kame Engine", nullptr, nullptr);
+
+  window = ((Kame::GlfwWindow*)(Kame::Platform::GetMainWindow().get()))->GetHandle();
   glfwSetWindowSizeCallback(window, onWindowResized);
 }
 
@@ -1063,8 +1066,8 @@ void shutdownVulkan() {
 }
 
 void shutdownGlfw() {
-  glfwDestroyWindow(window);
-  glfwTerminate();
+  //glfwDestroyWindow(window);
+  //glfwTerminate();
 }
 
 

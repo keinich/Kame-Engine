@@ -28,6 +28,7 @@ namespace Kame {
 
     // TODO game settings to get resolution
     Platform::CreateMainWindow(800, 600);
+    startGlfw();
     GraphicsApi::Init();
   }
 
