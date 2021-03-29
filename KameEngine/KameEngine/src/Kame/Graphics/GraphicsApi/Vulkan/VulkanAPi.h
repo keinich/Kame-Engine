@@ -17,6 +17,8 @@ namespace Kame {
     inline static VulkanApi* Get() { return _Instance; };
     static VulkanApi* CreateInstance();
 
+    virtual void DestroyInstance() override;
+
     inline VulkanInstance& GetInstance() { return *_VulkanInstance; }
     inline VkInstance GetVkInstance() { return _VulkanInstance->GetVkInstance(); }
 
@@ -31,7 +33,7 @@ namespace Kame {
     ~VulkanApi() {};
 
     virtual void InitInstance() override;
-    virtual void Shutdown() override;
+    virtual void ShutdownInstance() override;
 
     virtual void CreateWindowSurfaceInternal(Reference<Window> window) override;
 

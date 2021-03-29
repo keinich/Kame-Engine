@@ -34,6 +34,7 @@ namespace Kame {
 
   void Engine::Destroy() {
 
+    GraphicsApi::Shutdown();
     Platform::DestroyRenderWindow("Main Window");
     GraphicsApi::Destroy();
     Platform::Destroy();

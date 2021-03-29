@@ -22,6 +22,10 @@ namespace Kame {
     return _Instance;
   }
 
+  void VulkanApi::DestroyInstance() {
+    _VulkanInstance->Shutdown();
+  }
+
   void VulkanApi::InitInstance() {
 
     //TODO add extensions according to the game!
@@ -34,11 +38,9 @@ namespace Kame {
     startVulkan();
   }
 
-  void VulkanApi::Shutdown() {
+  void VulkanApi::ShutdownInstance() {
     shutdownVulkan();
     _VulkanDevice->Shutdown();
-    _VulkanInstance->Shutdown();
-    shutdownGlfw();
   }
 
   void VulkanApi::CreateWindowSurfaceInternal(Reference<Window> window) {

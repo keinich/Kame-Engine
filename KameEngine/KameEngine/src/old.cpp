@@ -333,9 +333,9 @@ void printInstanceExtensions() {
 
 void createGlfwWindowSurface() {
 
-  //Kame::VulkanSurface* vulkanSurface = (Kame::VulkanSurface *) Kame::Platform::GetMainWindow()->GetSurface().get();
-  //surface = vulkanSurface->GetHandle();
-  //return;
+  Kame::VulkanSurface* vulkanSurface = (Kame::VulkanSurface *) Kame::Platform::GetMainWindow()->GetSurface().get();
+  surface = vulkanSurface->GetHandle();
+  return;
   VkResult result = glfwCreateWindowSurface(instance, window, nullptr, &surface);
   ASSERT_VULKAN(result);
 }
@@ -1061,7 +1061,7 @@ void shutdownVulkan() {
   vkDestroyShaderModule(device, shaderModuleVert, nullptr);
   vkDestroySwapchainKHR(device, swapchain, nullptr);
   //vkDestroyDevice(device, nullptr);
-  vkDestroySurfaceKHR(instance, surface, nullptr);
+  //vkDestroySurfaceKHR(instance, surface, nullptr);
   //vkDestroyInstance(instance, nullptr);
 }
 

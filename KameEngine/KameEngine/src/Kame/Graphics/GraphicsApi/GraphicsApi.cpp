@@ -24,13 +24,19 @@ namespace Kame {
 
   void GraphicsApi::Destroy() {
     KAME_ASSERT(_Instance, "GraphicsApi cannot be destroyed becaust it is null");
-    _Instance->Shutdown();
+
+    _Instance->DestroyInstance();
+
     delete _Instance;
     _Instance = nullptr;
   }
 
   void GraphicsApi::Init() {
     _Instance->InitInstance();
+  }
+
+  void GraphicsApi::Shutdown() {
+    _Instance->ShutdownInstance();
   }
 
   void GraphicsApi::CreateWindowSurface(Reference<Window> window) {
