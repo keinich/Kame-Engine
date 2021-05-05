@@ -5,8 +5,8 @@
 #include "Kame/Application/Platform.h"
 
 __pragma(warning(push, 0))
-//#define VMA_IMPLEMENTATION
-//#include <vk_mem_alloc.h>
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
 __pragma(warning(pop))
 
 namespace Kame {
@@ -150,7 +150,7 @@ namespace Kame {
   }
 
   void VulkanDevice::CreateCommandAllocator() {
-    /*VmaVulkanFunctions vma_vulkan_func{};
+    VmaVulkanFunctions vma_vulkan_func{};
     vma_vulkan_func.vkAllocateMemory = vkAllocateMemory;
     vma_vulkan_func.vkBindBufferMemory = vkBindBufferMemory;
     vma_vulkan_func.vkBindImageMemory = vkBindImageMemory;
@@ -169,28 +169,28 @@ namespace Kame {
     vma_vulkan_func.vkUnmapMemory = vkUnmapMemory;
     vma_vulkan_func.vkCmdCopyBuffer = vkCmdCopyBuffer;
 
-    VmaAllocatorCreateInfo allocator_info{};
-    allocator_info.physicalDevice = gpu.get_handle();
-    allocator_info.device = handle;
-    allocator_info.instance = gpu.get_instance().get_handle();
+    //VmaAllocatorCreateInfo allocator_info{};
+    //allocator_info.physicalDevice = gpu.get_handle();
+    //allocator_info.device = handle;
+    //allocator_info.instance = gpu.get_instance().get_handle();
 
-    if (can_get_memory_requirements && has_dedicated_allocation) 	{
-      allocator_info.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
-      vma_vulkan_func.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
-      vma_vulkan_func.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
-    }
+    //if (can_get_memory_requirements && has_dedicated_allocation) 	{
+    //  allocator_info.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
+    //  vma_vulkan_func.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+    //  vma_vulkan_func.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+    //}
 
-    if (is_extension_supported(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME) && is_enabled(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) 	{
-      allocator_info.flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
-    }
+    //if (is_extension_supported(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME) && is_enabled(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) 	{
+    //  allocator_info.flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+    //}
 
-    allocator_info.pVulkanFunctions = &vma_vulkan_func;
+    //allocator_info.pVulkanFunctions = &vma_vulkan_func;
 
-    result = vmaCreateAllocator(&allocator_info, &memory_allocator);
+    //result = vmaCreateAllocator(&allocator_info, &memory_allocator);
 
-    if (result != VK_SUCCESS) 	{
-      throw VulkanException{ result, "Cannot create allocator" };
-    }*/
+    //if (result != VK_SUCCESS) 	{
+    //  throw VulkanException{ result, "Cannot create allocator" };
+    //}
   }
 
 }

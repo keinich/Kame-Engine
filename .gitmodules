@@ -7,3 +7,6 @@
 [submodule "KameEngine/KameEngine/vendor/volk"]
 	path = KameEngine/KameEngine/vendor/volk
 	url = https://github.com/zeux/volk
+[submodule "KameEngine/KameEngine/vendor/vma"]
+	path = KameEngine/KameEngine/vendor/vma
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
