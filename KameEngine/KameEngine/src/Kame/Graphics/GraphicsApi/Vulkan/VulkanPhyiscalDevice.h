@@ -7,7 +7,9 @@ namespace Kame {
   class VulkanInstance;
 
   class VulkanPhysicalDevice {
+
   public:
+
     VulkanPhysicalDevice(VulkanInstance& instance, VkPhysicalDevice handle);
     ~VulkanPhysicalDevice();
 
@@ -17,6 +19,8 @@ namespace Kame {
     const VkPhysicalDeviceProperties GetProperties() const;
     const VkPhysicalDeviceMemoryProperties GetMemoryProperties() const;
     const std::vector<VkQueueFamilyProperties>& GetQueueFamilyProperties() const;
+
+    VkBool32 IsPresentSupported(VkSurfaceKHR surface, int queueFamilyIndex);
 
     void* GetExtensionFeatureChain() const;
     const VkPhysicalDeviceFeatures GetRequestedFeatures() const;

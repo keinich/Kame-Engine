@@ -27,10 +27,12 @@ namespace Kame {
     std::vector<VkExtensionProperties> _DeviceExtensions;
     std::vector<const char*> _EnabledExtensions{};
 
+    std::vector<std::vector<VulkanQueue>> _Queues;
+
   private: // Methods
     bool IsExtensionSupported(const std::string& requestedExtension);
+    void CreateCommandAllocator();
 
-    std::vector<std::vector<VulkanQueue>> _Queues;
   };
 
 }

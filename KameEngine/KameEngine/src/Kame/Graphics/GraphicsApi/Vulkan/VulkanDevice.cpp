@@ -2,6 +2,12 @@
 #include "VulkanDevice.h"
 #include "VulkanAPi.h"
 #include "VulkanException.h"
+#include "Kame/Application/Platform.h"
+
+__pragma(warning(push, 0))
+//#define VMA_IMPLEMENTATION
+//#include <vk_mem_alloc.h>
+__pragma(warning(pop))
 
 namespace Kame {
 
@@ -107,16 +113,25 @@ namespace Kame {
 
     result = vkCreateDevice(gpu.GetHandle(), &createInfo, nullptr, &_Handle);
     ASSERT_VULKAN(result);
-   
+
     // Create the queues
     _Queues.resize(numberOfQueueFamilies);
 
     for (uint32_t queueFamilyIndex = 0U; queueFamilyIndex < numberOfQueueFamilies; ++queueFamilyIndex) {
       const VkQueueFamilyProperties& queueFamilyProperty = gpu.GetQueueFamilyProperties()[queueFamilyIndex];
 
-      //Reference<Window> w = Platform::GetMainWindow();
-      //VkBool32 presentSupported = gpu.IsPresentSupported(surface, queueFamilyIndex);
+      Reference<Window> w = Kame::Platform::GetMainWindow();
+      VkSurfaceKHR surface = w->GetSurface()->GetVkSurface();
+      VkBool32 presentSupported = gpu.IsPresentSupported(surface, queueFamilyIndex);
+
+      for (uint32_t queueIndex = 0; queueIndex < queueFamilyProperty.queueCount; queueIndex++) {
+        _Queues[queueFamilyIndex].emplace_back(
+          *this, queueFamilyIndex, queueFamilyProperty, presentSupported, queueIndex
+        );
+      }
     }
+
+    CreateCommandAllocator();
 
   }
 
@@ -132,6 +147,50 @@ namespace Kame {
       [requestedExtension](auto& deviceExtension) {
         return std::strcmp(deviceExtension.extensionName, requestedExtension.c_str()) == 0;
       }) != _DeviceExtensions.end();
+  }
+
+  void VulkanDevice::CreateCommandAllocator() {
+    /*VmaVulkanFunctions vma_vulkan_func{};
+    vma_vulkan_func.vkAllocateMemory = vkAllocateMemory;
+    vma_vulkan_func.vkBindBufferMemory = vkBindBufferMemory;
+    vma_vulkan_func.vkBindImageMemory = vkBindImageMemory;
+    vma_vulkan_func.vkCreateBuffer = vkCreateBuffer;
+    vma_vulkan_func.vkCreateImage = vkCreateImage;
+    vma_vulkan_func.vkDestroyBuffer = vkDestroyBuffer;
+    vma_vulkan_func.vkDestroyImage = vkDestroyImage;
+    vma_vulkan_func.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
+    vma_vulkan_func.vkFreeMemory = vkFreeMemory;
+    vma_vulkan_func.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+    vma_vulkan_func.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+    vma_vulkan_func.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+    vma_vulkan_func.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+    vma_vulkan_func.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
+    vma_vulkan_func.vkMapMemory = vkMapMemory;
+    vma_vulkan_func.vkUnmapMemory = vkUnmapMemory;
+    vma_vulkan_func.vkCmdCopyBuffer = vkCmdCopyBuffer;
+
+    VmaAllocatorCreateInfo allocator_info{};
+    allocator_info.physicalDevice = gpu.get_handle();
+    allocator_info.device = handle;
+    allocator_info.instance = gpu.get_instance().get_handle();
+
+    if (can_get_memory_requirements && has_dedicated_allocation) 	{
+      allocator_info.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
+      vma_vulkan_func.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+      vma_vulkan_func.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+    }
+
+    if (is_extension_supported(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME) && is_enabled(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) 	{
+      allocator_info.flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+    }
+
+    allocator_info.pVulkanFunctions = &vma_vulkan_func;
+
+    result = vmaCreateAllocator(&allocator_info, &memory_allocator);
+
+    if (result != VK_SUCCESS) 	{
+      throw VulkanException{ result, "Cannot create allocator" };
+    }*/
   }
 
 }

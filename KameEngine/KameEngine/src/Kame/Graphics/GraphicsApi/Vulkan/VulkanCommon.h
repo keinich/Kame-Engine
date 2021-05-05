@@ -1,7 +1,7 @@
 #pragma once
 
-//#define VK_NO_PROTOTYPES
-//#define VOLK_IMPLEMENTATION
+ //#define VK_NO_PROTOTYPES
+// #define VOLK_IMPLEMENTATION
 #include "volk.h"
 
 #define ASSERT_VULKAN(val)\

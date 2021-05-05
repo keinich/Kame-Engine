@@ -38,6 +38,17 @@ namespace Kame {
     return _QueueFamilyProperties;
   }
 
+  VkBool32 VulkanPhysicalDevice::IsPresentSupported(VkSurfaceKHR surface, int queueFamilyIndex) {
+    VkBool32 result{ VK_FALSE };
+
+    if (surface == VK_NULL_HANDLE) return false;
+
+    VkResult r = vkGetPhysicalDeviceSurfaceSupportKHR(_Handle, queueFamilyIndex, surface, &result);
+    ASSERT_VULKAN(r);
+
+    return result;
+  }
+
   void* VulkanPhysicalDevice::GetExtensionFeatureChain() const {
     return _LastRequestedExtensionFeature;
   }

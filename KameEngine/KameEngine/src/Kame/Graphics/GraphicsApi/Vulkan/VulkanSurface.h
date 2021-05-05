@@ -16,6 +16,8 @@ namespace Kame {
 
     virtual void CreateFromGlfwWindow(GLFWwindow* glfwWindow) override;
 
+    inline virtual VkSurfaceKHR GetVkSurface() override { return _Handle; }
+
     inline VkSurfaceKHR GetHandle() { return _Handle; }
 
   private: // Fields

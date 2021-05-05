@@ -5,7 +5,7 @@
 #include "GlfwPlatform.h"
 
 // glfw
-#define GLFW_INCLUDE_VULKAN
+//#define GLFW_INCLUDE_VULKAN
 #include <glfw/glfw3.h>
 
 // Kame

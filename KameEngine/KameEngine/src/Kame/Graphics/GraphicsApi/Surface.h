@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Kame/Graphics/GraphicsApi/Vulkan/VulkanCommon.h"
 #include <GLFW/glfw3.h>
 
 namespace Kame {
@@ -14,6 +15,7 @@ namespace Kame {
 
     virtual void CreateFromGlfwWindow(GLFWwindow* glfwWindow) = 0;
 
+    virtual VkSurfaceKHR GetVkSurface() = 0;
   };
 
 }
