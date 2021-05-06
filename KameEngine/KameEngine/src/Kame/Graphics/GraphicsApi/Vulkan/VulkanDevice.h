@@ -3,6 +3,8 @@
 #include <unordered_map>
 
 #include "VulkanCommon.h"
+
+#include <vk_mem_alloc.h>
 #include "VulkanPhyiscalDevice.h"
 #include "VulkanQueue.h"
 
@@ -14,8 +16,8 @@ namespace Kame {
     VulkanDevice(const VulkanDevice&) = delete;
     VulkanDevice(VulkanDevice&&) = delete;
     ~VulkanDevice();
-    VulkanDevice &operator=(const VulkanDevice&) = delete;
-    VulkanDevice &operator=(VulkanDevice&&) = delete;
+    VulkanDevice& operator=(const VulkanDevice&) = delete;
+    VulkanDevice& operator=(VulkanDevice&&) = delete;
 
     void Init(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> reqeuestedExtensions = {});
     void Shutdown();
@@ -29,9 +31,13 @@ namespace Kame {
 
     std::vector<std::vector<VulkanQueue>> _Queues;
 
+    VmaAllocator _MemoryAllocator{ VK_NULL_HANDLE };
+
   private: // Methods
     bool IsExtensionSupported(const std::string& requestedExtension);
-    void CreateCommandAllocator();
+    bool IsEnabled(const char* extension);
+
+    void CreateCommandAllocator(VulkanPhysicalDevice& gpu, bool getMemoryRequirementsSupported, bool dedicatedAllocationSupported);
 
   };
 

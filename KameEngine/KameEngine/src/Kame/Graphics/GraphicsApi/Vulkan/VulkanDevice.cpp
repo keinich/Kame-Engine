@@ -131,7 +131,7 @@ namespace Kame {
       }
     }
 
-    CreateCommandAllocator();
+    CreateCommandAllocator(gpu, getMemoryRequirementsSupported, dedicatedAllocationSupported);
 
   }
 
@@ -149,48 +149,62 @@ namespace Kame {
       }) != _DeviceExtensions.end();
   }
 
-  void VulkanDevice::CreateCommandAllocator() {
-    VmaVulkanFunctions vma_vulkan_func{};
-    vma_vulkan_func.vkAllocateMemory = vkAllocateMemory;
-    vma_vulkan_func.vkBindBufferMemory = vkBindBufferMemory;
-    vma_vulkan_func.vkBindImageMemory = vkBindImageMemory;
-    vma_vulkan_func.vkCreateBuffer = vkCreateBuffer;
-    vma_vulkan_func.vkCreateImage = vkCreateImage;
-    vma_vulkan_func.vkDestroyBuffer = vkDestroyBuffer;
-    vma_vulkan_func.vkDestroyImage = vkDestroyImage;
-    vma_vulkan_func.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
-    vma_vulkan_func.vkFreeMemory = vkFreeMemory;
-    vma_vulkan_func.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
-    vma_vulkan_func.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
-    vma_vulkan_func.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
-    vma_vulkan_func.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
-    vma_vulkan_func.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
-    vma_vulkan_func.vkMapMemory = vkMapMemory;
-    vma_vulkan_func.vkUnmapMemory = vkUnmapMemory;
-    vma_vulkan_func.vkCmdCopyBuffer = vkCmdCopyBuffer;
+  bool VulkanDevice::IsEnabled(const char* extension) {
+    return std::find_if(
+      _EnabledExtensions.begin(), _EnabledExtensions.end(),
+      [extension](const char* enabledExtension) {
+        return std::strcmp(extension, enabledExtension) == 0;
+      }
+    ) != _EnabledExtensions.end();
+  }
 
-    //VmaAllocatorCreateInfo allocator_info{};
-    //allocator_info.physicalDevice = gpu.get_handle();
-    //allocator_info.device = handle;
-    //allocator_info.instance = gpu.get_instance().get_handle();
+  void VulkanDevice::CreateCommandAllocator(
+    VulkanPhysicalDevice& gpu, bool getMemoryRequirementsSupported, bool dedicatedAllocationSupported
+  ) {
+    VmaVulkanFunctions vmaVulkanFunc{};
+    vmaVulkanFunc.vkAllocateMemory = vkAllocateMemory;
+    vmaVulkanFunc.vkBindBufferMemory = vkBindBufferMemory;
+    vmaVulkanFunc.vkBindImageMemory = vkBindImageMemory;
+    vmaVulkanFunc.vkCreateBuffer = vkCreateBuffer;
+    vmaVulkanFunc.vkCreateImage = vkCreateImage;
+    vmaVulkanFunc.vkDestroyBuffer = vkDestroyBuffer;
+    vmaVulkanFunc.vkDestroyImage = vkDestroyImage;
+    vmaVulkanFunc.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
+    vmaVulkanFunc.vkFreeMemory = vkFreeMemory;
+    vmaVulkanFunc.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+    vmaVulkanFunc.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+    vmaVulkanFunc.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+    vmaVulkanFunc.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+    vmaVulkanFunc.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
+    vmaVulkanFunc.vkMapMemory = vkMapMemory;
+    vmaVulkanFunc.vkUnmapMemory = vkUnmapMemory;
+    vmaVulkanFunc.vkCmdCopyBuffer = vkCmdCopyBuffer;
 
-    //if (can_get_memory_requirements && has_dedicated_allocation) 	{
-    //  allocator_info.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
-    //  vma_vulkan_func.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
-    //  vma_vulkan_func.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
-    //}
+    VmaAllocatorCreateInfo allocatorInfo{};
+    allocatorInfo.physicalDevice = gpu.GetHandle();
+    allocatorInfo.device = _Handle;
+    allocatorInfo.instance = gpu.GetVulkanInstance().GetVkInstance();
 
-    //if (is_extension_supported(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME) && is_enabled(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) 	{
-    //  allocator_info.flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
-    //}
+    if (getMemoryRequirementsSupported && dedicatedAllocationSupported) {
+      allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
+      vmaVulkanFunc.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+      vmaVulkanFunc.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+    }
 
-    //allocator_info.pVulkanFunctions = &vma_vulkan_func;
+    if (
+      IsExtensionSupported(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME) &&
+      IsEnabled(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)
+      ) {
+      allocatorInfo.flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+    }
 
-    //result = vmaCreateAllocator(&allocator_info, &memory_allocator);
+    allocatorInfo.pVulkanFunctions = &vmaVulkanFunc;
 
-    //if (result != VK_SUCCESS) 	{
-    //  throw VulkanException{ result, "Cannot create allocator" };
-    //}
+    VkResult result = vmaCreateAllocator(&allocatorInfo, &_MemoryAllocator);
+
+    if (result != VK_SUCCESS) 	{
+      throw VulkanException{ result, "Cannot create allocator" };
+    }
   }
 
 }

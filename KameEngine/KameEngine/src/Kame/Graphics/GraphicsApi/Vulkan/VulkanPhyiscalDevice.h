@@ -13,7 +13,8 @@ namespace Kame {
     VulkanPhysicalDevice(VulkanInstance& instance, VkPhysicalDevice handle);
     ~VulkanPhysicalDevice();
 
-    inline VkPhysicalDevice GetHandle() { return _Handle; }
+    inline VkPhysicalDevice GetHandle() const { return _Handle; }
+    inline VulkanInstance& GetVulkanInstance() const { return _Instance; }
 
     const VkPhysicalDeviceFeatures& GetFeatures() const;
     const VkPhysicalDeviceProperties GetProperties() const;
@@ -27,7 +28,7 @@ namespace Kame {
 
     template <typename T>
     T& RequestExtensionFeatures(VkStructureType type) {
-      
+
       // This needs to be enabled
       if (!_Instance->IsEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         throw std::runtime_error(
