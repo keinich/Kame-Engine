@@ -402,7 +402,9 @@ void createLogicalDevice() {
 }
 
 void createQueue() {
-  vkGetDeviceQueue(device, 0, 0, &queue);
+  queue = Kame::VulkanApi::Get()->GetDevice().GetQueue(0, 0).GetHandle();
+
+  //vkGetDeviceQueue(device, 0, 0, &queue);
 }
 
 void checkSurfaceSupport() {
@@ -857,11 +859,11 @@ void startVulkan() {
   createInstance(); //Done
   //
   //physicalDevices = getAllPhysicalDevices();
-  printInstanceLayers();
-  printInstanceExtensions();
+  //printInstanceLayers();
+  //printInstanceExtensions();
 
-  createLogicalDevice();
-  createQueue();
+  createLogicalDevice(); // Done
+  createQueue(); // Done
 
 
   createRenderPass();

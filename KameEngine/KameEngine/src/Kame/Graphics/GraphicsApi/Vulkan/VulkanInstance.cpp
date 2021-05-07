@@ -38,14 +38,17 @@ namespace Kame {
     std::vector<VkExtensionProperties> availableInstanceExtensions(numberOfInstanceExtensions);
     result = vkEnumerateInstanceExtensionProperties(nullptr, &numberOfInstanceExtensions, availableInstanceExtensions.data());
 
+    // Instance Extensions
 #if defined(KAME_DEBUG)
     bool debugUtils = false;
+    KM_CORE_INFO("{} InstanceExensions are available", numberOfInstanceExtensions);
     for (VkExtensionProperties& availableExtension : availableInstanceExtensions) {
       if (strcmp(availableExtension.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0) {
         debugUtils = true;
         KM_CORE_INFO("{} is available, enabling it", VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         _EnabledExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
       }
+      KM_CORE_INFO("{} is available", availableExtension.extensionName);
     }
     if (!debugUtils) {
       _EnabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
@@ -101,6 +104,7 @@ namespace Kame {
       throw std::runtime_error("Required instance extensions are missing.");
     }
 
+    // Instance Layers
     uint32_t numberOfInstanceLayers;
     result = vkEnumerateInstanceLayerProperties(&numberOfInstanceLayers, nullptr);
     ASSERT_VULKAN(result);
@@ -111,6 +115,15 @@ namespace Kame {
 
     const std::vector<const char*>& requiredValidationLayers = Engine::GetRequiredVulkanInstanceValidationLayers();
     std::vector<const char*> requestedValidationLayers(requiredValidationLayers);
+
+#if KAME_DEBUG
+
+    KM_CORE_INFO("{} InstanceLayers are available", numberOfInstanceLayers);
+    for (VkLayerProperties layerName : supportedValidationLayers) {
+      KM_CORE_INFO("{} is available", layerName.layerName);
+    }
+
+#endif
 
     if (ValidateLayers(requiredValidationLayers, supportedValidationLayers)) {
       KM_CORE_INFO("Enabled Validation Layers:");

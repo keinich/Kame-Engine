@@ -139,6 +139,10 @@ namespace Kame {
     vkDestroyDevice(_Handle, nullptr);
   }
 
+  const VulkanQueue& VulkanDevice::GetQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) {
+    return _Queues[queueFamilyIndex][queueIndex];
+  }
+
   VulkanDevice::~VulkanDevice() {}
 
   bool VulkanDevice::IsExtensionSupported(const std::string& requestedExtension) {

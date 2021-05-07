@@ -24,6 +24,8 @@ namespace Kame {
 
     inline VkDevice GetHandle() { return _Handle; }
 
+    const VulkanQueue& GetQueue(uint32_t queueFamilyIndex, uint32_t queueIndex);
+
   private: // Fields
     VkDevice _Handle{ VK_NULL_HANDLE };
     std::vector<VkExtensionProperties> _DeviceExtensions;
