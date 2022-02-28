@@ -12,6 +12,7 @@ namespace Kame {
 
   class VulkanApi : public GraphicsApi {
     friend class GraphicsApi;
+
   public: // Methods
 
     inline static VulkanApi* Get() { return _Instance; };
