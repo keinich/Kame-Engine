@@ -36,6 +36,7 @@ namespace Kame {
     VmaAllocator _MemoryAllocator{ VK_NULL_HANDLE };
 
   private: // Methods
+    void InitExtensions(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> requestedExtensions);
     bool IsExtensionSupported(const std::string& requestedExtension);
     bool IsEnabled(const char* extension);
 

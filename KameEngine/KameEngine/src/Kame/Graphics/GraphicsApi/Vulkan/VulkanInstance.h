@@ -26,10 +26,16 @@ namespace Kame {
     }
 
   private: // Methods
+
+
     void Init(bool headless);
+    void FillApplicationInfo(VkApplicationInfo& appInfo);
     void Shutdown();
 
     void QueryGpus();
+    void InitExtensions(bool headless);
+    void InitLayers();
+
     bool ValidateLayers(
       const std::vector<const char*>& requiredLayers,
       const std::vector<VkLayerProperties>& availableLayers
@@ -41,6 +47,19 @@ namespace Kame {
     std::vector<NotCopyableReference<VulkanPhysicalDevice>> _PhysicalDevices;
 
     std::vector<const char*> _EnabledExtensions;
+    std::vector<const char*> _RequestedLayers;
+
+#if defined(KAME_DEBUG) || defined(VKB_VALIDATION_LAYERS)
+    /**
+     * @brief Debug utils messenger callback for VK_EXT_Debug_Utils
+     */
+    VkDebugUtilsMessengerEXT _DebugUtilsMessenger{ VK_NULL_HANDLE };
+
+    /**
+     * @brief The debug report callback
+     */
+    VkDebugReportCallbackEXT _DebugReportCallback{ VK_NULL_HANDLE };
+#endif
 
   };
 

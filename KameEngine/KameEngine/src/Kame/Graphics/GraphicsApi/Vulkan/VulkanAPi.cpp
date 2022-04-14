@@ -17,7 +17,7 @@ namespace Kame {
     _Instance = new VulkanApi();
 
     _Instance->_VulkanInstance = CreateNotCopyableReference<VulkanInstance>();
-    _Instance->_VulkanInstance->Init(true);
+    _Instance->_VulkanInstance->Init(false);
 
     return _Instance;
   }

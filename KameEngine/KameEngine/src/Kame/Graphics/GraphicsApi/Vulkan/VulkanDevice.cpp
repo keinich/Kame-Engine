@@ -31,69 +31,11 @@ namespace Kame {
       queueCreateInfo.pQueuePriorities = queuePriorities[i].data();
     }
 
-    // Check extensions to enable Vma Dedicated Allocation
-    uint32_t numberOfDeviceExtensions;
-    VkResult result = vkEnumerateDeviceExtensionProperties(gpu.GetHandle(), nullptr, &numberOfDeviceExtensions, nullptr);
-    ASSERT_VULKAN(result);
-    _DeviceExtensions = std::vector<VkExtensionProperties>(numberOfDeviceExtensions);
-    result = vkEnumerateDeviceExtensionProperties(gpu.GetHandle(), nullptr, &numberOfDeviceExtensions, _DeviceExtensions.data());
+    InitExtensions(gpu, requestedExtensions);
 
-    // Log the supported extensions
-    if (_DeviceExtensions.size() > 0) {
-      KM_INFO("Device supports the following extensions:");
-      for (auto& extensions : _DeviceExtensions) {
-        KM_INFO("  \t{}", extensions.extensionName);
-      }
-    }
-
-    // Dedicated Allocation Extensions
+    // Build the CreateInfo for the device
     bool getMemoryRequirementsSupported = IsExtensionSupported("VK_KHR_get_memory_requirements2");
     bool dedicatedAllocationSupported = IsExtensionSupported("VK_KHR_dedicated_allocation");
-
-    if (getMemoryRequirementsSupported && dedicatedAllocationSupported) {
-      _EnabledExtensions.push_back("VK_KHR_get_memory_requirements2");
-      _EnabledExtensions.push_back("VK_KHR_dedicated_allocation");
-
-      KM_INFO("Dedicated Allocation enabled");
-    }
-
-    //TODO Performance Query Extensions
-
-    // Check tat extensions are supported before trying to create the device
-    std::vector<const char*> unsopportedExtensions{};
-    for (std::pair<const char* const, bool>& extension : requestedExtensions) {
-      if (IsExtensionSupported(extension.first)) {
-        _EnabledExtensions.emplace_back(extension.first);
-      }
-      else {
-        unsopportedExtensions.emplace_back(extension.first);
-      }
-    }
-
-    if (_EnabledExtensions.size() > 0) {
-      KM_INFO("Device supports the following requested extensions:");
-      for (const char*& extension : _EnabledExtensions) {
-        KM_INFO(" \t{}", extension);
-      }
-    }
-
-    if (unsopportedExtensions.size() > 0) {
-      bool error = false;
-      for (const char*& extension : unsopportedExtensions) {
-        bool extensionIsOptional = requestedExtensions[extension];
-        if (extensionIsOptional) {
-          KM_WARN("Optional device extension {} not available, some features may be disabled", extension);
-        }
-        else {
-          KM_ERROR("Required extension {} not available, cannot run", extension);
-        }
-        error = error || !extensionIsOptional;
-      }
-
-      if (error) {
-        throw VulkanException(VK_ERROR_EXTENSION_NOT_PRESENT, "Extension not present");
-      }
-    }
 
     VkDeviceCreateInfo createInfo{ VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO };
     createInfo.pNext = gpu.GetExtensionFeatureChain();
@@ -111,7 +53,7 @@ namespace Kame {
 
     createInfo.pEnabledFeatures = &usedFeatures1;
 
-    result = vkCreateDevice(gpu.GetHandle(), &createInfo, nullptr, &_Handle);
+    VkResult result = vkCreateDevice(gpu.GetHandle(), &createInfo, nullptr, &_Handle);
     ASSERT_VULKAN(result);
 
     // Create the queues
@@ -151,6 +93,85 @@ namespace Kame {
       [requestedExtension](auto& deviceExtension) {
         return std::strcmp(deviceExtension.extensionName, requestedExtension.c_str()) == 0;
       }) != _DeviceExtensions.end();
+  }
+
+  void VulkanDevice::InitExtensions(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> requestedExtensions) {
+    // Check extensions to enable Vma Dedicated Allocation
+    uint32_t numberOfDeviceExtensions;
+    VkResult result = vkEnumerateDeviceExtensionProperties(gpu.GetHandle(), nullptr, &numberOfDeviceExtensions, nullptr);
+    ASSERT_VULKAN(result);
+    _DeviceExtensions = std::vector<VkExtensionProperties>(numberOfDeviceExtensions);
+    result = vkEnumerateDeviceExtensionProperties(gpu.GetHandle(), nullptr, &numberOfDeviceExtensions, _DeviceExtensions.data());
+
+    // Log the supported extensions
+    if (_DeviceExtensions.size() > 0) {
+      KM_INFO("Device supports the following extensions:");
+      for (auto& extensions : _DeviceExtensions) {
+        KM_INFO("  \t{}", extensions.extensionName);
+      }
+    }
+
+    // Dedicated Allocation Extensions
+    bool getMemoryRequirementsSupported = IsExtensionSupported("VK_KHR_get_memory_requirements2");
+    bool dedicatedAllocationSupported = IsExtensionSupported("VK_KHR_dedicated_allocation");
+
+    if (getMemoryRequirementsSupported && dedicatedAllocationSupported) {
+      _EnabledExtensions.push_back("VK_KHR_get_memory_requirements2");
+      _EnabledExtensions.push_back("VK_KHR_dedicated_allocation");
+
+      KM_INFO("Dedicated Allocation enabled");
+    }
+
+    if (IsExtensionSupported("VK_KHR_performance_query") && IsExtensionSupported("VK_EXT_host_query_reset")) {
+      auto perfCounterFeatures = gpu.RequestExtensionFeatures<VkPhysicalDevicePerformanceQueryFeaturesKHR>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR
+      );
+      auto hostQueryResetFeatures = gpu.RequestExtensionFeatures<VkPhysicalDeviceHostQueryResetFeatures>(
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES
+      );
+
+      if (perfCounterFeatures.performanceCounterQueryPools && hostQueryResetFeatures.hostQueryReset) {
+        _EnabledExtensions.push_back("VK_KHR_performance_query");
+        _EnabledExtensions.push_back("VK_EXT_host_query_reset");
+        KM_INFO("Performance query enabled");
+      }
+    }
+
+    // Check tat extensions are supported before trying to create the device
+    std::vector<const char*> unsopportedExtensions{};
+    for (std::pair<const char* const, bool>& extension : requestedExtensions) {
+      if (IsExtensionSupported(extension.first)) {
+        _EnabledExtensions.emplace_back(extension.first);
+      }
+      else {
+        unsopportedExtensions.emplace_back(extension.first);
+      }
+    }
+
+    if (_EnabledExtensions.size() > 0) {
+      KM_INFO("Device supports the following requested extensions:");
+      for (const char*& extension : _EnabledExtensions) {
+        KM_INFO(" \t{}", extension);
+      }
+    }
+
+    if (unsopportedExtensions.size() > 0) {
+      bool error = false;
+      for (const char*& extension : unsopportedExtensions) {
+        bool extensionIsOptional = requestedExtensions[extension];
+        if (extensionIsOptional) {
+          KM_WARN("Optional device extension {} not available, some features may be disabled", extension);
+        }
+        else {
+          KM_ERROR("Required extension {} not available, cannot run", extension);
+        }
+        error = error || !extensionIsOptional;
+      }
+
+      if (error) {
+        throw VulkanException(VK_ERROR_EXTENSION_NOT_PRESENT, "Extension not present");
+      }
+    }
   }
 
   bool VulkanDevice::IsEnabled(const char* extension) {
@@ -206,9 +227,11 @@ namespace Kame {
 
     VkResult result = vmaCreateAllocator(&allocatorInfo, &_MemoryAllocator);
 
-    if (result != VK_SUCCESS) 	{
+    if (result != VK_SUCCESS) {
       throw VulkanException{ result, "Cannot create allocator" };
     }
+
+    // TODO Command Pool and Fence Pool
   }
 
 }
