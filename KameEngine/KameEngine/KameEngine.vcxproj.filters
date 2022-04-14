@@ -109,6 +109,9 @@
     <ClInclude Include="src\VulkanUtils.h" />
     <ClInclude Include="src\kmpch.h" />
     <ClInclude Include="src\old.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandPool.h">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="src\kmpch.cpp" />
     <ClCompile Include="src\old.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandPool.cpp">
+      <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">

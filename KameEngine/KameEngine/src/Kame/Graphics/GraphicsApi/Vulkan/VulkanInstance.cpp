@@ -267,6 +267,16 @@ namespace Kame {
   }
 
   void VulkanInstance::Shutdown() {
+
+#if defined(KAME_DEBUG) || defined(VKB_VALIDATION_LAYERS)
+    if (_DebugUtilsMessenger != VK_NULL_HANDLE) {
+      vkDestroyDebugUtilsMessengerEXT(_VkInstance, _DebugUtilsMessenger, nullptr);
+    }
+    if (_DebugReportCallback != VK_NULL_HANDLE) {
+      vkDestroyDebugReportCallbackEXT(_VkInstance, _DebugReportCallback, nullptr);
+    }
+#endif
+
     vkDestroyInstance(_VkInstance, nullptr);
   }
 

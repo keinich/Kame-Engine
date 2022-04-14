@@ -598,14 +598,17 @@ void createFramebuffers() {
 }
 
 void createCommandPool() {
-  VkCommandPoolCreateInfo commandPoolCreateInfo;
-  commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-  commandPoolCreateInfo.pNext = nullptr;
-  commandPoolCreateInfo.flags = 0;
-  commandPoolCreateInfo.queueFamilyIndex = 0; //TODO civ
 
-  VkResult result = vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, &commandPool);
-  ASSERT_VULKAN(result);
+  commandPool = Kame::VulkanApi::Get()->GetDevice().GetVkCommandPool();
+
+  //VkCommandPoolCreateInfo commandPoolCreateInfo;
+  //commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  //commandPoolCreateInfo.pNext = nullptr;
+  //commandPoolCreateInfo.flags = 0;
+  //commandPoolCreateInfo.queueFamilyIndex = 0; //TODO civ
+
+  //VkResult result = vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, &commandPool);
+  //ASSERT_VULKAN(result);
 }
 
 void createDepthImage() {
@@ -869,7 +872,7 @@ void startVulkan() {
   createRenderPass();
   createDescriptorSetLayout();
   createPipeline();
-  createCommandPool();
+  createCommandPool(); // Done
   createDepthImage();
 
   createCommandBuffers();
@@ -1042,7 +1045,7 @@ void shutdownVulkan() {
   vkFreeCommandBuffers(device, commandPool, numberOfImagesInSwapchain, commandBuffers);
   delete[] commandBuffers;
 
-  vkDestroyCommandPool(device, commandPool, nullptr);
+  //vkDestroyCommandPool(device, commandPool, nullptr);
 
   for (size_t i = 0; i < numberOfImagesInSwapchain; ++i) {
     vkDestroyFramebuffer(device, framebuffers[i], nullptr);

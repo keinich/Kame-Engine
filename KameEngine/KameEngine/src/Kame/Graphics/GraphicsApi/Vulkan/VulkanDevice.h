@@ -7,6 +7,7 @@
 #include <vk_mem_alloc.h>
 #include "VulkanPhyiscalDevice.h"
 #include "VulkanQueue.h"
+#include "VulkanCommandPool.h"
 
 namespace Kame {
 
@@ -25,6 +26,9 @@ namespace Kame {
     inline VkDevice GetHandle() { return _Handle; }
 
     const VulkanQueue& GetQueue(uint32_t queueFamilyIndex, uint32_t queueIndex);
+    const VulkanQueue& GetQueueByFlags(VkQueueFlags queueFlags, uint32_t queueIndex);
+
+    inline VkCommandPool GetVkCommandPool() { return _CommandPool->GetHandle(); }; //TODO delete this again
 
   private: // Fields
     VkDevice _Handle{ VK_NULL_HANDLE };
@@ -34,6 +38,8 @@ namespace Kame {
     std::vector<std::vector<VulkanQueue>> _Queues;
 
     VmaAllocator _MemoryAllocator{ VK_NULL_HANDLE };
+
+    NotCopyableReference<VulkanCommandPool> _CommandPool;
 
   private: // Methods
     void InitExtensions(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> requestedExtensions);

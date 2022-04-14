@@ -30,7 +30,7 @@ namespace Kame {
     T& RequestExtensionFeatures(VkStructureType type) {
 
       // This needs to be enabled
-      if (!_Instance->IsEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
+      if (!_Instance.IsEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         throw std::runtime_error(
           "Couldnt request feature from device as" +
           std::string(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) +
@@ -44,7 +44,7 @@ namespace Kame {
       }
 
       VkPhysicalDeviceFeatures2KHR physicalDeviceFeatures{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR };
-      T extension(type);
+      T extension{ type };
       physicalDeviceFeatures.pNext = &extension;
       vkGetPhysicalDeviceFeatures2KHR(_Handle, &physicalDeviceFeatures);
 

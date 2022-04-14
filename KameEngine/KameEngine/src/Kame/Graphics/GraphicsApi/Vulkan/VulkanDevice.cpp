@@ -78,11 +78,38 @@ namespace Kame {
   }
 
   void VulkanDevice::Shutdown() {
-    vkDestroyDevice(_Handle, nullptr);
+
+    _CommandPool.reset();
+
+    if (_MemoryAllocator != VK_NULL_HANDLE) {
+      VmaStats stats;
+      vmaCalculateStats(_MemoryAllocator, &stats);
+
+      KM_CORE_INFO("Total device memory leaked: {} bytes.", stats.total.usedBytes);
+
+      vmaDestroyAllocator(_MemoryAllocator);
+    }
+
+    if (_Handle != VK_NULL_HANDLE) {
+      vkDestroyDevice(_Handle, nullptr);
+    }
   }
 
   const VulkanQueue& VulkanDevice::GetQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) {
     return _Queues[queueFamilyIndex][queueIndex];
+  }
+
+  const VulkanQueue& VulkanDevice::GetQueueByFlags(VkQueueFlags requiredQueueFlags, uint32_t queueIndex) {
+    for (uint32_t queueFamilyIndex = 0U; queueFamilyIndex < _Queues.size(); ++queueFamilyIndex) {
+      VulkanQueue const& firstQueue = _Queues[queueFamilyIndex][0];
+
+      VkQueueFlags queueFlags = firstQueue.GetProperties().queueFlags;
+      VkQueueFlags queueCount = firstQueue.GetProperties().queueCount;
+
+      if (((queueFlags & requiredQueueFlags) == requiredQueueFlags) && queueIndex < queueCount) {
+        return _Queues[queueFamilyIndex][queueIndex];
+      }
+    }
   }
 
   VulkanDevice::~VulkanDevice() {}
@@ -125,10 +152,10 @@ namespace Kame {
     if (IsExtensionSupported("VK_KHR_performance_query") && IsExtensionSupported("VK_EXT_host_query_reset")) {
       auto perfCounterFeatures = gpu.RequestExtensionFeatures<VkPhysicalDevicePerformanceQueryFeaturesKHR>(
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR
-      );
+        );
       auto hostQueryResetFeatures = gpu.RequestExtensionFeatures<VkPhysicalDeviceHostQueryResetFeatures>(
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES
-      );
+        );
 
       if (perfCounterFeatures.performanceCounterQueryPools && hostQueryResetFeatures.hostQueryReset) {
         _EnabledExtensions.push_back("VK_KHR_performance_query");
@@ -231,7 +258,12 @@ namespace Kame {
       throw VulkanException{ result, "Cannot create allocator" };
     }
 
-    // TODO Command Pool and Fence Pool
+    _CommandPool = CreateNotCopyableReference<VulkanCommandPool>(
+      *this,
+      GetQueueByFlags(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT, 0).GetFamilyIndex()
+      );
+
+    // Fence Pool
   }
 
 }
