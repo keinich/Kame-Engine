@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "VulkanCommon.h"
+#include "VulkanCommandBuffer.h"
 
 namespace Kame {
 
@@ -15,7 +16,8 @@ namespace Kame {
     VulkanCommandPool(
       VulkanDevice& device, uint32_t queueFamilyIndex,
       VulkanRenderFrame* renderFrame = nullptr,
-      size_t threadIndex = 0
+      size_t threadIndex = 0,
+      VulkanCommandBuffer::ResetMode resetMode = VulkanCommandBuffer::ResetMode::ResetPool
    );
 
     VulkanCommandPool(const VulkanCommandPool&) = delete;

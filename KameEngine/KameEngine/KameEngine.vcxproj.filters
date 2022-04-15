@@ -112,6 +112,8 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandPool.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandBuffer.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanFencePool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">
@@ -170,6 +172,7 @@
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandPool.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanFencePool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">
