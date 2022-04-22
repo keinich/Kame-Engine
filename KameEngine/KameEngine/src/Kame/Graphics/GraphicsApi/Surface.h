@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kame/Graphics/GraphicsApi/Vulkan/VulkanCommon.h"
+#include "Vulkan/VulkanCommon.h"
 #include <GLFW/glfw3.h>
 
 namespace Kame {

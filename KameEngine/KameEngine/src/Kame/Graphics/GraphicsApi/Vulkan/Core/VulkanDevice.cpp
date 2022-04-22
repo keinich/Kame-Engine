@@ -1,8 +1,9 @@
 #include "kmpch.h"
-#include "VulkanDevice.h"
-#include "VulkanAPi.h"
-#include "VulkanException.h"
 #include "Kame/Application/Platform.h"
+#include <Kame/Application/Window.h>
+#include "VulkanInstance.h"
+#include "VulkanDevice.h"
+#include "VulkanException.h"
 
 __pragma(warning(push, 0))
 #define VMA_IMPLEMENTATION
@@ -74,6 +75,12 @@ namespace Kame {
     }
 
     CreateCommandAllocator(gpu, getMemoryRequirementsSupported, dedicatedAllocationSupported);
+
+    _CommandPool = CreateNotCopyableReference<VulkanCommandPool>(
+      *this,
+      GetQueueByFlags(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT, 0).GetFamilyIndex()
+      );
+    _FencePool = CreateNotCopyableReference<VulkanFencePool>(*this);
 
   }
 
@@ -257,13 +264,7 @@ namespace Kame {
     if (result != VK_SUCCESS) {
       throw VulkanException{ result, "Cannot create allocator" };
     }
-
-    _CommandPool = CreateNotCopyableReference<VulkanCommandPool>(
-      *this,
-      GetQueueByFlags(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT, 0).GetFamilyIndex()
-      );
-
-    // Fence Pool
+        
   }
 
 }

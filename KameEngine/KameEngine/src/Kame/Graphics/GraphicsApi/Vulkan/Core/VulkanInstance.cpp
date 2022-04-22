@@ -1,9 +1,9 @@
 #include "kmpch.h"
 #define VOLK_IMPLEMENTATION
-#include "VulkanCommon.h"
+#include "../VulkanCommon.h"
 #include "VulkanInstance.h"
 #include "Kame/Engine.h"
-#include <Kame/Graphics/GraphicsApi/Vulkan/VulkanException.h>
+#include "VulkanException.h"
 
 namespace Kame {
 

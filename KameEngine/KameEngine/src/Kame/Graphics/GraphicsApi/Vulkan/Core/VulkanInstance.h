@@ -1,7 +1,8 @@
 #pragma once
 
-#include "VulkanCommon.h"
+#include "../VulkanCommon.h"
 #include "VulkanPhyiscalDevice.h"
+#include "../Rendering/VulkanRenderContext.h"
 
 namespace Kame {
 
@@ -45,9 +46,11 @@ namespace Kame {
     VkInstance _VkInstance;
 
     std::vector<NotCopyableReference<VulkanPhysicalDevice>> _PhysicalDevices;
+        
+    std::vector<const char*> _EnabledExtensions; //Instance Extensions used in vkCreateInstance
+    std::vector<const char*> _RequestedLayers; //Layers used in vkCreateInstance
 
-    std::vector<const char*> _EnabledExtensions;
-    std::vector<const char*> _RequestedLayers;
+    NotCopyableReference<VulkanRenderContext> _RenderContext{ nullptr };
 
 #if defined(KAME_DEBUG) || defined(VKB_VALIDATION_LAYERS)
     /**

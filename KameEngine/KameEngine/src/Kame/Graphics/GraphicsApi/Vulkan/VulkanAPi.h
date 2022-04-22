@@ -3,8 +3,8 @@
 // Kame
 #include <Kame/Core/References.h>
 #include "../GraphicsApi.h"
-#include "VulkanInstance.h"
-#include "VulkanDevice.h"
+#include "Core/VulkanInstance.h"
+#include "Core/VulkanDevice.h"
 
 namespace Kame {
 

@@ -1,11 +1,11 @@
 #include "kmpch.h"
-#include "VulkanAPi.h"
+#include "VulkanApi.h"
 
 // Kame
 
 //TODO Remove
 #include <old.h>
-#include <Kame/Graphics/GraphicsApi/Vulkan/VulkanSurface.h>
+#include "Core/VulkanSurface.h"
 
 namespace Kame {
 

@@ -2,12 +2,13 @@
 
 #include <unordered_map>
 
-#include "VulkanCommon.h"
+#include "../VulkanCommon.h"
 
 #include <vk_mem_alloc.h>
 #include "VulkanPhyiscalDevice.h"
 #include "VulkanQueue.h"
 #include "VulkanCommandPool.h"
+#include "VulkanFencePool.h"
 
 namespace Kame {
 
@@ -40,6 +41,7 @@ namespace Kame {
     VmaAllocator _MemoryAllocator{ VK_NULL_HANDLE };
 
     NotCopyableReference<VulkanCommandPool> _CommandPool;
+    NotCopyableReference<VulkanFencePool> _FencePool;
 
   private: // Methods
     void InitExtensions(VulkanPhysicalDevice& gpu, std::unordered_map<const char*, bool> requestedExtensions);

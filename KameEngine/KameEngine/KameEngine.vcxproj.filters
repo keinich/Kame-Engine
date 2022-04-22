@@ -72,31 +72,31 @@
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Surface.h">
       <Filter>Kame\Graphics\GraphicsApi</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanApi.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommon.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanDevice.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanDevice.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanException.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanException.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanInstance.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanPhyiscalDevice.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanPhyiscalDevice.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanQueue.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanQueue.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanStringExtensions.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanSurface.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanSurface.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Kame\Logging\Log.h">
@@ -109,11 +109,12 @@
     <ClInclude Include="src\VulkanUtils.h" />
     <ClInclude Include="src\kmpch.h" />
     <ClInclude Include="src\old.h" />
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandPool.h">
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanCommandPool.h">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandBuffer.h" />
-    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanFencePool.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanCommandBuffer.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanFencePool.h" />
+    <ClInclude Include="src\Kame\Graphics\GraphicsApi\Vulkan\Rendering\VulkanRenderContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Kame\Application\FileSystem.cpp">
@@ -140,28 +141,28 @@
     <ClCompile Include="src\Kame\Graphics\GraphicsApi\GraphicsApi.cpp">
       <Filter>Kame\Graphics\GraphicsApi</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanAPi.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanApi.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanDevice.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanDevice.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanException.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanException.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanInstance.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanInstance.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanPhyiscalDevice.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanPhyiscalDevice.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanQueue.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanQueue.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanStringExtensions.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanStringExtensions.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanSurface.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanSurface.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Kame\Logging\Log.cpp">
@@ -169,10 +170,11 @@
     </ClCompile>
     <ClCompile Include="src\kmpch.cpp" />
     <ClCompile Include="src\old.cpp" />
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanCommandPool.cpp">
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanCommandPool.cpp">
       <Filter>Kame\Graphics\GraphicsApi\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\VulkanFencePool.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Core\VulkanFencePool.cpp" />
+    <ClCompile Include="src\Kame\Graphics\GraphicsApi\Vulkan\Rendering\VulkanRenderContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Kame\Graphics\GraphicsApi\Vulkan\Shaders\shader.frag">

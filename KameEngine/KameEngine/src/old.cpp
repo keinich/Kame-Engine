@@ -23,7 +23,7 @@
 #include <Kame/Application/FileSystem.h>
 #include <Kame/Graphics/GraphicsApi/Vulkan/VulkanAPi.h>
 #include <Kame/Application/Platform.h>
-#include <Kame/Graphics/GraphicsApi/Vulkan/VulkanSurface.h>
+#include <Kame/Graphics/GraphicsApi/Vulkan/Core/VulkanSurface.h>
 #include <Kame/Application/glfw/GlfwWindow.h>
 
 VkInstance instance;
@@ -56,6 +56,7 @@ uint32_t width = 800;
 uint32_t height = 600;
 //const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_UNORM;
 const VkFormat ourFormat = VK_FORMAT_B8G8R8A8_SRGB;
+//const VkFormat ourFormat = VK_FORMAT_R8G8B8A8_SRGB;
 
 struct UniformBufferObject {
   glm::mat4 model;

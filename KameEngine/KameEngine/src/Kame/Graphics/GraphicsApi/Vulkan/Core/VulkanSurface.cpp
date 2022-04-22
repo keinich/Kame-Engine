@@ -1,7 +1,7 @@
 #include "kmpch.h"
 #include "VulkanSurface.h"
 
-#include "VulkanAPi.h"
+#include "../VulkanApi.h"
 
 Kame::VulkanSurface::VulkanSurface(){
   _Handle = VK_NULL_HANDLE;
